@@ -11,7 +11,6 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.swing.JOptionPane;
 
-import com.mysql.fabric.xmlrpc.base.Param;
 
 import domain.Controller;
 import domain.Course;
@@ -104,7 +103,7 @@ public class SchoolManagementSystemJavaFX extends Application {
 			}
 
 			catch (IOException e) {
-				System.out.println("Fel vi inläsning av FXML-filer");
+				System.out.println("Fel vi inlï¿½sning av FXML-filer");
 			}
 
 		});
