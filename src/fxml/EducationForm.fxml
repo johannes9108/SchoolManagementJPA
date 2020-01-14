@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox prefHeight="167.0" prefWidth="251.0">
+         <children>
+            <AnchorPane>
+               <children>
+                  <Label text="Name">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </Label>
+                  <TextField fx:id="nameField" layoutX="158.0" layoutY="6.0" prefHeight="26.0" prefWidth="150.0" AnchorPane.rightAnchor="5.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane>
+               <children>
+                  <Label text="Faculty">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </Label>
+                  <TextField fx:id="facultyField" layoutX="158.0" layoutY="6.0" prefHeight="26.0" prefWidth="150.0" AnchorPane.rightAnchor="5.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane>
+               <children>
+                  <Label text="Start Date">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </Label>
+                  <DatePicker fx:id="startDatePicker" layoutX="158.0" layoutY="6.0" prefHeight="26.0" prefWidth="150.0" AnchorPane.rightAnchor="5.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="26.0" prefWidth="150.0">
+               <children>
+                  <Label text="Final Date">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </Label>
+                  <DatePicker fx:id="finalDatePicker" layoutX="158.0" layoutY="6.0" prefHeight="26.0" prefWidth="150.0" AnchorPane.rightAnchor="5.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
