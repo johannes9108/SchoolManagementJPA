@@ -64,12 +64,14 @@ public class AddController implements SubControllerAPI {
 	@FXML
 	private ListView<String> teacherListView;
 	@FXML
-	private ListView<String> coursesListView;
+	private ListView<String> courseListView;
 	@FXML
 	private ListView<String> educationListView;
 	@FXML
 	private ListView<String> studentListView;
 	
+	@FXML
+	private ListView<String> relationshipListView;
 	
 
 	@FXML
@@ -130,7 +132,7 @@ public class AddController implements SubControllerAPI {
 	
 	public void handleAdd() {
 
-		if(teacherListView == null) {
+		if(relationshipListView == null) {
 			System.out.println("TLW existerar EJ");
 			System.exit(0);
 		}
@@ -143,7 +145,7 @@ public class AddController implements SubControllerAPI {
 			result = controller.add(new Teacher(firstNameField.getText(), lastNameField.getText(),
 					birthDatePicker.getValue(), emailField.getText()));
 			if(result>=0) {
-				List<Integer> indicies = convertItemsToIDs(teacherListView);
+				List<Integer> indicies = convertItemsToIDs(relationshipListView);
 				controller.associate(currentSelection,result,indicies);
 			}
 			break;
