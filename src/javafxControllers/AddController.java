@@ -176,7 +176,7 @@ public class AddController implements SubControllerAPI {
 	}
 
 	public void handleClear() {
-		System.out.println("Tryckte på CLEAR");
+		System.out.println("Tryckte pÃ¥ CLEAR");
 
 		switch (currentSelection) {
 		case TEACHER:
