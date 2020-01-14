@@ -9,6 +9,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
 import domain.Education;
+import domain.Student;
+import java.util.HashSet;
 
 public class EducationJPAImpl implements SchoolManagementDAO<Education> {
 
@@ -112,6 +114,10 @@ public class EducationJPAImpl implements SchoolManagementDAO<Education> {
 		try {
 			tx.begin();
 			Education education = em.find(Education.class, id);
+                        List <Student> students = education.getStudents();
+                        for (Student student : students) {
+                        student.setEducation(null);
+                    }
 			em.remove(education);
 			tx.commit();
 			return id;

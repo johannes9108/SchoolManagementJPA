@@ -14,6 +14,7 @@ import domain.Course;
 import domain.Education;
 import domain.Student;
 import domain.Teacher;
+import java.util.Set;
 import model.EntityType;
 
 public class SchoolMgmtProject {
@@ -22,11 +23,20 @@ public class SchoolMgmtProject {
     public static void main(String[] args) {
 
         setUpData();
-        Controller controller = new Controller();
+//        Controller controller = new Controller();
         
         
-        List<Teacher> set = (List<Teacher>) controller.getAll(EntityType.TEACHER);
-        set.forEach(System.out::println);
+//        controller.removeById(1, EntityType.EDUCATION);
+//        controller.removeById(2, EntityType.EDUCATION);
+//        List <Education> educations = (List<Education>) controller.getAll(EntityType.EDUCATION);
+//        for (Education education : educations) {
+//            System.out.println(education.getName());
+//        }
+        
+        
+        
+//        List<Teacher> set = (List<Teacher>) controller.getAll(EntityType.TEACHER);
+//        set.forEach(System.out::println);
 //        List<Course> set1 = (List<Course>) controller.getAll(EntityType.COURSE);
 //        set1.forEach(System.out::println);
 //        List<Education> set2 = (List<Education>) controller.getAll(EntityType.EDUCATION);
@@ -34,11 +44,11 @@ public class SchoolMgmtProject {
 //        List<Student> set3 = (List<Student>) controller.getAll(EntityType.STUDENT);
 //        set3.forEach(System.out::println);
 
-        List<Integer> courses = new ArrayList<Integer>();
-        courses.add(2);
-        
-        controller.associate(EntityType.TEACHER, 1, courses);
-        set.forEach(System.out::println);
+//        List<Integer> courses = new ArrayList<Integer>();
+//        courses.add(2);
+//        
+//        controller.associate(EntityType.TEACHER, 1, courses);
+//        set.forEach(System.out::println);
     }
 
 	public static void setUpData() {
