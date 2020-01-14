@@ -34,7 +34,7 @@ public class Course {
     @Basic
     private int points;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "courses")
     private List<Teacher> teachers;
 
     @ManyToMany(mappedBy = "courses")

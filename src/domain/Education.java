@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -36,10 +37,10 @@ public class Education {
     @Basic
     private LocalDate finalDate;
 
-    @OneToMany(mappedBy = "education")
+    @ManyToMany(cascade = CascadeType.PERSIST)
     private List<Student> students;
 
-    @ManyToMany
+    @ManyToMany (cascade =CascadeType.PERSIST)
     private List<Course> courses;
 
     public Education(String name, String faculty, LocalDate startDate, LocalDate finalDate) {

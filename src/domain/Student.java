@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 /**
@@ -35,7 +36,7 @@ public class Student {
 
     @ManyToOne
     private Education education;
-
+    
     public Student() {
     }
 
@@ -45,8 +46,6 @@ public class Student {
         this.birthDate = birthDate;
         this.email = email;
     }
-    
-    
 
     public int getId() {
         return this.id;
@@ -100,6 +99,5 @@ public class Student {
     public String toString() {
         return "Student{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate + ", email=" + email + ", education=" + education.getName() + '}';
     }
-    
 
 }
