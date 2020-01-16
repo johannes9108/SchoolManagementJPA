@@ -132,11 +132,6 @@ public class AddController implements SubControllerAPI {
 	
 	public void handleAdd() {
 
-		if(relationshipListView == null) {
-			System.out.println("TLW existerar EJ");
-			System.exit(0);
-		}
-		
 		
 		int result = -1;
 
@@ -148,24 +143,50 @@ public class AddController implements SubControllerAPI {
 				List<Integer> indicies = convertItemsToIDs(relationshipListView);
 				controller.associate(currentSelection,result,indicies);
 			}
+			firstNameField.clear();
+			lastNameField.clear();
+			birthDatePicker.setValue(null);
+			emailField.clear();
+			relationshipListView.getSelectionModel().clearSelection();
 			break;
 		case COURSE:
 			result = controller.add(new Course(nameField.getText(), subjectField.getText(), difficultyField.getText(),
-					Integer.parseInt("1")));
+					Integer.parseInt(pointsField.getText())));
 			
 //			result = controller.add(new Course(nameField.getText(), subjectField.getText(), difficultyField.getText(),
 //					Integer.parseInt(pointsField.getText())));
+			
+			nameField.clear();
+			subjectField.clear();
+			difficultyField.clear();
+			pointsField.clear();
+			relationshipListView.getSelectionModel().clearSelection();
+
 			break;
 		case EDUCATION:
 			result = controller.add(new Education(nameField.getText(), facultyField.getText(), startDate.getValue(),
 					finalDate.getValue()));
+			
+			nameField.clear();
+			facultyField.clear();
+			startDate.setValue(null);
+			finalDate.setValue(null);
+			
 			break;
 		case STUDENT:
 			result = controller.add(new Student(firstNameField.getText(), lastNameField.getText(),
 					birthDatePicker.getValue(), emailField.getText()));
+			if(result>=0) {
+				List<Integer> indicies = convertItemsToIDs(relationshipListView);
+				controller.associate(currentSelection,result,indicies);
+			}
+			firstNameField.clear();
+			lastNameField.clear();
+			birthDatePicker.setValue(null);
+			emailField.clear();
 			break;
 		}
-		if (result>0) {
+		if (result>=0) {
 			controller.refreshLocalData(currentSelection);
 			mainApp.report("Success when adding!");
 			
@@ -176,20 +197,33 @@ public class AddController implements SubControllerAPI {
 	}
 
 	public void handleClear() {
-		System.out.println("Tryckte på CLEAR");
 
 		switch (currentSelection) {
 		case TEACHER:
-			System.out.println("Clearar Teachers osv");
+			firstNameField.clear();
+			lastNameField.clear();
+			birthDatePicker.setValue(null);
+			emailField.clear();
+			relationshipListView.getSelectionModel().clearSelection();
 			break;
 		case COURSE:
-
+			nameField.clear();
+			subjectField.clear();
+			difficultyField.clear();
+			pointsField.clear();
+			relationshipListView.getSelectionModel().clearSelection();
 			break;
 		case EDUCATION:
-
+			nameField.clear();
+			facultyField.clear();
+			startDate.setValue(null);
+			finalDate.setValue(null);
 			break;
 		case STUDENT:
-
+			firstNameField.clear();
+			lastNameField.clear();
+			birthDatePicker.setValue(null);
+			emailField.clear();
 			break;
 		}
 	}

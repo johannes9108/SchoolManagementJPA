@@ -3,6 +3,7 @@ package ui;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -11,27 +12,24 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.swing.JOptionPane;
 
-//COMMIT THIS SHIT
-
 import domain.Controller;
 import domain.Course;
 import domain.Education;
 import domain.Student;
 import domain.Teacher;
 import javafx.application.Application;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
@@ -39,15 +37,13 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.CheckBoxListCell;
-import javafx.scene.control.cell.ComboBoxListCell;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import javafxControllers.AddController;
 import javafxControllers.DisplayController;
 import model.EntityType;
@@ -104,7 +100,7 @@ public class SchoolManagementSystemJavaFX extends Application {
 			}
 
 			catch (IOException e) {
-				System.out.println("Fel vi inlï¿½sning av FXML-filer");
+				System.out.println("Fel vi inläsning av FXML-filer");
 			}
 
 		});
@@ -205,7 +201,6 @@ public class SchoolManagementSystemJavaFX extends Application {
 					});
 
 				ListView<String> lw = ((ListView<String>) root.getChildrenUnmodifiable().get(1));
-				lw.setId("teacherListView");
 				lw.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 				lw.getItems().addAll(courses);
 				hbox.getChildren().add(root);
@@ -242,7 +237,6 @@ public class SchoolManagementSystemJavaFX extends Application {
 					});
 
 				lw = ((ListView<String>) root.getChildrenUnmodifiable().get(1));
-				lw.setId("teacherListView");
 				lw.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 				lw.getItems().addAll(teachers);
 				
@@ -262,7 +256,6 @@ public class SchoolManagementSystemJavaFX extends Application {
 					});
 
 				ListView<String> lw2 = ((ListView<String>) root.getChildrenUnmodifiable().get(1));
-				lw2.setId("educationListView");
 				lw2.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 				lw2.getItems().addAll(educations);
 				
@@ -283,8 +276,34 @@ public class SchoolManagementSystemJavaFX extends Application {
 				loader = new FXMLLoader(getClass().getResource("/fxml/StudentForm.fxml"));
 				loader.setController(addController);
 				loader.load();
+				
+				
+			
 				root = loader.getRoot();
-				formContainer.add(root);
+				((Label) ((VBox) root.getChildrenUnmodifiable().get(0)).getChildren().get(0)).setText("New Student");
+
+				hbox = new HBox();
+				hbox.getChildren().add(root);
+
+				loader = new FXMLLoader(getClass().getResource("/fxml/RelationshipPicker.fxml"));
+				loader.setController(addController);
+				loader.load();
+				root = loader.getRoot();
+				((Label) root.getChildrenUnmodifiable().get(0)).setText("Education");
+
+				educations = new ArrayList<String>();
+				controller.getAll(EntityType.EDUCATION).forEach(t -> {
+					Education tmp = (Education)t;
+					educations.add(tmp.getName() + "\tID\t"  + tmp.getId());
+					});
+
+				lw = ((ListView<String>) root.getChildrenUnmodifiable().get(1));
+				lw.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+				lw.getItems().addAll(educations);
+				hbox.getChildren().add(root);
+				formContainer.add(hbox);
+				
+				
 				break;
 			}
 		} catch (IOException ex) {
@@ -299,12 +318,92 @@ public class SchoolManagementSystemJavaFX extends Application {
 
 	public void insertCorrectDisplayView(EntityType type) {
 		// This code reaches the TableView
+		LocalDate fromDefault = LocalDate.of(1950, 5, 1), toDefault = LocalDate.of(2015, 12, 28);
 		SplitPane sp = (SplitPane) tabGroup.get(0).getContent();
 		TableView<Teacher> teacherTW = (TableView) ((AnchorPane) sp.getItems().get(1)).getChildren().get(0);
 		TableView<Student> studentTW = (TableView) ((AnchorPane) sp.getItems().get(1)).getChildren().get(0);
 		TableView<Education> educationTW = (TableView) ((AnchorPane) sp.getItems().get(1)).getChildren().get(0);
 		TableView<Course> courseTW = (TableView) ((AnchorPane) sp.getItems().get(1)).getChildren().get(0);
 
+		VBox sideControllVbox = (VBox) ((AnchorPane)sp.getItems().get(0)).getChildren().get(0);
+		ObservableMap<String,Node> searchItems = FXCollections.observableMap(new HashMap<>());
+		ObservableList<Node> sideControllChildren = sideControllVbox.getChildren();
+		searchItems.put("Label",sideControllChildren.get(0));
+		searchItems.put("ChoiceBox",sideControllChildren.get(1));
+		
+		sideControllChildren.removeIf((Node t)-> !(t instanceof Label || t instanceof ChoiceBox<?> || t instanceof Button));
+		
+		
+		
+		Button filterButton = (Button)sideControllChildren.remove(2);
+		filterButton.setId("filterButton");
+		
+		
+		
+		TextField searchID = new TextField();
+		searchID.setPromptText("ID");
+		searchID.setPrefWidth(150);
+		TextField searchFirstName = new TextField();
+		searchFirstName.setPromptText("First name");
+		searchFirstName.setPrefWidth(150);
+		searchFirstName.setId("searchFirstName");
+		TextField searchLastName = new TextField();
+		searchLastName.setPromptText("Last name");
+		searchLastName.setPrefWidth(150);
+		
+		TextField searchEmail = new TextField();
+		searchEmail.setPromptText("Email");
+		searchEmail.setPrefWidth(150);
+		DatePicker searchBirthDateFrom = new DatePicker();
+		searchBirthDateFrom.setPromptText("BirthDate From");
+		searchBirthDateFrom.setPrefWidth(150);
+		DatePicker searchBirthDateTo = new DatePicker();
+		searchBirthDateTo.setPromptText("BirthDate From");
+		searchBirthDateTo.setPrefWidth(150);
+		searchBirthDateTo.setValue(toDefault);
+		
+		
+		TextField searchName = new TextField();
+		searchName.setPromptText("Name");
+		searchName.setPrefWidth(150);
+		TextField searchDifficulty = new TextField();
+		searchDifficulty.setPromptText("Difficulty");
+		searchDifficulty.setPrefWidth(150);
+		
+		TextField searchFaculty = new TextField();
+		searchFaculty.setPromptText("Faculty");
+		searchFaculty.setPrefWidth(150);
+		
+		TextField searchPointsFrom = new TextField();
+		searchPointsFrom.setPromptText("Points Min");
+		searchPointsFrom.setPrefWidth(150);
+		TextField searchPointsTo = new TextField();
+		searchPointsTo.setPromptText("Points Max");
+		searchPointsTo.setPrefWidth(150);
+		
+		DatePicker searchStartDateFrom = new DatePicker();
+		searchStartDateFrom.setPromptText("StartDate From");
+		searchStartDateFrom.setPrefWidth(150);
+		DatePicker searchStartDateTo = new DatePicker();
+		searchStartDateTo.setPromptText("StartDate To");
+		searchStartDateTo.setPrefWidth(150);
+		searchStartDateTo.setValue(toDefault);
+		DatePicker searchFinalDateFrom = new DatePicker();
+		searchFinalDateFrom.setPromptText("FinalDate From");
+		searchFinalDateFrom.setPrefWidth(150);
+		DatePicker searchFinalDateTo = new DatePicker();
+		searchFinalDateTo.setPromptText("FinalDate To");
+		searchFinalDateTo.setPrefWidth(150);
+		searchFinalDateTo.setValue(toDefault);
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		TableColumn<Teacher, Integer> teacherId = new TableColumn<>("ID");
 		teacherId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		TableColumn<Teacher, String> teacherFirstName = new TableColumn<>("First Name");
@@ -315,6 +414,11 @@ public class SchoolManagementSystemJavaFX extends Application {
 		teacherBirthDate.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
 		TableColumn<Teacher, String> teacherEmail = new TableColumn<>("Email");
 		teacherEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+		
+		
+		
+		
+		
 		// COURSES missing from teacher
 
 		TableColumn<Course, Integer> courseId = new TableColumn<>("ID");
@@ -360,6 +464,22 @@ public class SchoolManagementSystemJavaFX extends Application {
 			teacherTW.getColumns().add(teacherLastName);
 			teacherTW.getColumns().add(teacherEmail);
 			teacherTW.getColumns().add(teacherBirthDate);
+			
+			searchItems.put("ID", searchID);
+			searchItems.put("FirstName", searchFirstName);
+			searchItems.put("LastName",searchLastName);
+			searchItems.put("Email",searchEmail);
+			searchItems.put("BirthDateFrom",searchBirthDateFrom);
+			searchItems.put("BirthDateTo",searchBirthDateTo);
+			
+			sideControllChildren.add(searchID);
+			sideControllChildren.add(searchFirstName);
+			sideControllChildren.add(searchLastName);
+			sideControllChildren.add(searchEmail);
+			sideControllChildren.add(searchBirthDateFrom);
+			sideControllChildren.add(searchBirthDateTo);
+			
+			
 			break;
 		case COURSE: // Course
 			courseTW.getColumns().clear();
@@ -367,6 +487,18 @@ public class SchoolManagementSystemJavaFX extends Application {
 			courseTW.getColumns().add(courseName);
 			courseTW.getColumns().add(courseDifficulty);
 			courseTW.getColumns().add(coursePoints);
+			
+			searchItems.put("ID",searchID);
+			searchItems.put("Name",searchName);
+			searchItems.put("Difficulty",searchDifficulty);
+			searchItems.put("PointsFrom",searchPointsFrom);
+			searchItems.put("PointsTo",searchPointsTo);
+			
+			sideControllChildren.add(searchID);
+			sideControllChildren.add(searchName);
+			sideControllChildren.add(searchDifficulty);
+			sideControllChildren.add(searchPointsFrom);
+			sideControllChildren.add(searchPointsTo);
 			break;
 		case EDUCATION: // Education
 			educationTW.getColumns().clear();
@@ -375,6 +507,22 @@ public class SchoolManagementSystemJavaFX extends Application {
 			educationTW.getColumns().add(educationFaculty);
 			educationTW.getColumns().add(educationStartDate);
 			educationTW.getColumns().add(educationFinalDate);
+			
+			searchItems.put("ID",searchID);
+			searchItems.put("Name",searchName);
+			searchItems.put("Faculty",searchFaculty);
+			searchItems.put("StartDateFrom",searchStartDateFrom);
+			searchItems.put("StartDateTo",searchStartDateTo);
+			searchItems.put("FinalDateFrom",searchFinalDateFrom);
+			searchItems.put("FinalDateTo",searchFinalDateTo);
+			
+			sideControllChildren.add(searchID);
+			sideControllChildren.add(searchName);
+			sideControllChildren.add(searchFaculty);
+			sideControllChildren.add(searchStartDateFrom);
+			sideControllChildren.add(searchStartDateTo);
+			sideControllChildren.add(searchFinalDateFrom);
+			sideControllChildren.add(searchFinalDateTo);
 			break;
 
 		case STUDENT: // Student
@@ -382,13 +530,29 @@ public class SchoolManagementSystemJavaFX extends Application {
 			studentTW.getColumns().add(studentId);
 			studentTW.getColumns().add(studentFirstName);
 			studentTW.getColumns().add(studentLastName);
-			studentTW.getColumns().add(studentBirthDate);
 			studentTW.getColumns().add(studentEmail);
+			studentTW.getColumns().add(studentBirthDate);
 //			studentTW.getColumns().add(studentEducation);
 
+			searchItems.put("ID",searchID);
+			searchItems.put("FirstName",searchFirstName);
+			searchItems.put("LastName",searchLastName);
+			searchItems.put("Email",searchEmail);
+			searchItems.put("BirthDateFrom",searchBirthDateFrom);
+			searchItems.put("BirthDateTo",searchBirthDateTo);
+			
+			sideControllChildren.add(searchID);
+			sideControllChildren.add(searchFirstName);
+			sideControllChildren.add(searchLastName);
+			sideControllChildren.add(searchEmail);
+			sideControllChildren.add(searchBirthDateFrom);
+			sideControllChildren.add(searchBirthDateTo);
 			break;
 		}
 
+		searchItems.put("filterButton",filterButton);
+		sideControllChildren.add(filterButton);
+		displayController.setSearchItems(searchItems);
 	}
 
 	public static void setUpData() {
