@@ -47,13 +47,14 @@ private EntityManagerFactory emf;
 
 		try {
 			tx.begin();
-			Student studentUpdate = em.find(Student.class, student.getId());
-			studentUpdate.setBirthDate(student.getBirthDate());
-			studentUpdate.setEducation(student.getEducation());
-			studentUpdate.setEmail(student.getEmail());
-			studentUpdate.setFirstName(student.getFirstName());
+                        em.merge(student);
+//			Student studentUpdate = em.find(Student.class, student.getId());
+//			studentUpdate.setBirthDate(student.getBirthDate());
+//			studentUpdate.setEducation(student.getEducation());
+//			studentUpdate.setEmail(student.getEmail());
+//			studentUpdate.setFirstName(student.getFirstName());
 			tx.commit();
-			return studentUpdate.getId();
+			return student.getId();
 		} catch (Exception e) {
 			System.out.println("Couldn't update the object" + student);
 			return -1;

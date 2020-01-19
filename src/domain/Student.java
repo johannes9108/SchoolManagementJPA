@@ -3,8 +3,10 @@
  */
 package domain;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,11 +17,11 @@ import javax.persistence.ManyToOne;
  * @author rober
  */
 @Entity
-public class Student {
+public class Student {//implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Basic
     private String firstName;
@@ -33,7 +35,7 @@ public class Student {
     @Basic
     private String email;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Education education;
 
     public Student() {
@@ -93,8 +95,32 @@ public class Student {
     }
 
     public void setEducation(Education education) {
+//        if (this.education != null) {this.education.internalRemoveStudent(this);}
         this.education = education;
+//        if (education != null) {education.internalAddStudent(this);}
+//        education.getStudents().add(this);
     }
+    
+//        @Override
+//    public int hashCode() {
+//        int hash = 0;
+//        hash += (id != null ? id.hashCode() : 0);
+//        return hash;
+//    }
+//
+//    @Override
+//    public boolean equals(Object object) {
+//        // TODO: Warning - this method won't work in the case the id fields are not set
+//        if (!(object instanceof Student)) {
+//            return false;
+//        }
+//        Student other = (Student) object;
+//        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+//            return false;
+//        }
+//        return true;
+//    }
+
 
     @Override
     public String toString() {

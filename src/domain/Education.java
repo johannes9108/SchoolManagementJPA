@@ -5,9 +5,12 @@ package domain;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,7 +39,7 @@ public class Education {
     @Basic
     private LocalDate finalDate;
 
-    @OneToMany(mappedBy = "education")
+    @OneToMany(mappedBy = "education")//, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Student> students;
 
     @ManyToMany
@@ -47,20 +50,16 @@ public class Education {
         this.faculty = faculty;
         this.startDate = startDate;
         this.finalDate = finalDate;
-        students = new ArrayList<>();
+        this.students = new ArrayList<>();
         courses = new ArrayList<>();
-        
+
     }
 
     public Education() {
-        students = new ArrayList<>();
+        this.students = new ArrayList<>();
         courses = new ArrayList<>();
-        
-    }
 
-    
-    
-    
+    }
 
     public int getId() {
         return this.id;
@@ -102,24 +101,35 @@ public class Education {
         this.finalDate = finalDate;
     }
 
-    public List<Student> getStudents() {
+//    public List<Student> getStudents() {
+//        if (students == null) {
+//            students = new ArrayList<>();
+//        }
+//        return this.students;
+//    }
+    
+       public List<Student> getStudents() {
         if (students == null) {
             students = new ArrayList<>();
         }
-        return this.students;
+        return students;//Collections.unmodifiableList(students);
     }
+    
+    public void internalRemoveStudent(Student student){students.remove(student);}
+    public void internalAddStudent(Student student){students.add(student);}
+    
 
     public void setStudents(List<Student> students) {
         this.students = students;
     }
 
     public void addStudent(Student student) {
-        getStudents().add(student);
         student.setEducation(this);
+        students.add(student);
     }
 
     public void removeStudent(Student student) {
-        getStudents().remove(student);
+//        getStudents().remove(student);
         student.setEducation(null);
     }
 
@@ -144,14 +154,13 @@ public class Education {
         course.getEducations().remove(this);
     }
 
-    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Education{" + "id=" + id + ", name=" + name + ", faculty=" + faculty + ", startDate=" + startDate + ", finalDate=" + finalDate + ", Courses=");
-        courses.forEach(t->sb.append(t.getName()+ ", "));
+        courses.forEach(t -> sb.append(t.getName() + ", "));
         sb.append("\nStudents=");
-        students.forEach(t->sb.append(t.getFirstName()+" " + t.getLastName() + ", "));
-        sb.delete(sb.length()-2, sb.length());
+        students.forEach(t -> sb.append(t.getFirstName() + " " + t.getLastName() + ", "));
+        sb.delete(sb.length() - 2, sb.length());
         sb.append('}');
         return sb.toString();
     }
