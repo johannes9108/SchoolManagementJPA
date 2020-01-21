@@ -69,7 +69,7 @@ public class TeacherJPAImpl implements SchoolManagementDAO<Teacher> {
         try {
             em.getTransaction().begin();
             Teacher newTeacher = em.find(Teacher.class, id);
-            System.out.println(newTeacher);
+//            System.out.println(newTeacher);
             em.getTransaction().commit();
             return newTeacher;
         } catch (Exception e) {

@@ -119,13 +119,14 @@ public class EducationJPAImpl implements SchoolManagementDAO<Education> {
 			Education education = em.find(Education.class, id);
                         List <Student> students = education.getStudents();
                         for (Student student : students) {
-                        student.setEducation(null);
-                    }
+                        student.clearEducation();
+                        }
+//                        education.getStudents().clear();
 			em.remove(education);
 			tx.commit();
 			return id;
 		} catch (Exception exception) {
-			System.out.println("Couldn't remove the object with ID: " + id);
+			System.out.println("Couldn't remove the object with ID: " + id + exception);
 			return -1;
 		} finally {
 			if (em != null)

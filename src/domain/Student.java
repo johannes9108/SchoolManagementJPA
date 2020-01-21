@@ -35,7 +35,7 @@ public class Student {//implements Serializable {
     @Basic
     private String email;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST})
     private Education education;
 
     public Student() {
@@ -93,11 +93,13 @@ public class Student {//implements Serializable {
     public Education getEducation() {
         return this.education;
     }
-
+    public void clearEducation() {
+        this.education = null;
+    }
     public void setEducation(Education education) {
-//        if (this.education != null) {this.education.internalRemoveStudent(this);}
+        if (this.education != null) {this.education.internalRemoveStudent(this);}
         this.education = education;
-//        if (education != null) {education.internalAddStudent(this);}
+        if (education != null) {education.internalAddStudent(this);}
 //        education.getStudents().add(this);
     }
     
