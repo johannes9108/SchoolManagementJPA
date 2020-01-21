@@ -25,23 +25,28 @@ public class SchoolMgmtProject {
         setUpData();
         Controller controller = new Controller();
                                 
-//        controller.removeById(1, EntityType.EDUCATION);
-//        controller.removeById(2, EntityType.EDUCATION);
-//        List <Education> educations = (List<Education>) controller.getAll(EntityType.EDUCATION);
-//        for (Education education : educations) {
-//            System.out.println(education.getName());
-//        }
+        controller.getAll(EntityType.STUDENT);
         
         
         
-//        List<Teacher> set = (List<Teacher>) controller.getAll(EntityType.TEACHER);
-//        set.forEach(System.out::println);
-//        List<Course> set1 = (List<Course>) controller.getAll(EntityType.COURSE);
-//        set1.forEach(System.out::println);
-//        List<Education> set2 = (List<Education>) controller.getAll(EntityType.EDUCATION);
-//        set2.forEach(System.out::println);
-//        List<Student> set3 = (List<Student>) controller.getAll(EntityType.STUDENT);
-//        set3.forEach(System.out::println);
+        List <Education> educations = (List<Education>) controller.getAll(EntityType.EDUCATION);
+        for (Education education : educations) {
+            System.out.println(education.getName());
+        }
+        
+        
+        
+        List<Teacher> set = (List<Teacher>) controller.getAll(EntityType.TEACHER);
+        set.forEach(System.out::println);
+        List<Course> set1 = (List<Course>) controller.getAll(EntityType.COURSE);
+        set1.forEach(System.out::println);
+        List<Education> set2 = (List<Education>) controller.getAll(EntityType.EDUCATION);
+        set2.forEach(System.out::println);
+        List<Student> set3 = (List<Student>) controller.getAll(EntityType.STUDENT);
+        set3.forEach(System.out::println);
+        
+        
+        controller.removeById(2, EntityType.EDUCATION);
 
 //        List<Integer> courses = new ArrayList<Integer>();
 //        courses.add(2);
