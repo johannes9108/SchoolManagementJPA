@@ -16,14 +16,21 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
+import javafx.stage.Stage;
 import model.EntityType;
 import ui.SchoolManagementSystemJavaFX;
 
@@ -34,6 +41,8 @@ public class DisplayController implements SubControllerAPI {
 
 	private Controller controller;
 	private EntityType currentSelection;
+
+	private HashMap<String, String> currentFilterMap;
 
 	@FXML
 	private TableView<?> tw;
@@ -94,9 +103,18 @@ public class DisplayController implements SubControllerAPI {
 		tw.setRowFactory(tw -> {
 			TableRow row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
-				if (event.getClickCount() == 2 && (!row.isEmpty())) {
+				if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 && (!row.isEmpty())&& currentSelection!=EntityType.STUDENT) {
 					mainApp.displayFullInfo(currentSelection, row.getItem());
 				}
+				if (event.getButton() == MouseButton.SECONDARY) {
+					System.out.println("Högerklicka");
+					System.out.println(row.getParent());
+
+					createContextMenu(currentSelection, row,
+							row.getParent().getScene().getWindow().getX() + event.getSceneX() + 5,
+							row.getParent().getScene().getWindow().getY() + event.getSceneY() + 55);
+				}
+
 			});
 
 			return row;
@@ -110,9 +128,11 @@ public class DisplayController implements SubControllerAPI {
 		ObservableList<?> displayList = tw.getItems();
 		ArrayList tmp = null;
 
+		collection.forEach(System.out::println);
+
 		System.out.println(filterMap);
 		if (filterMap != null && !filterMap.isEmpty()) {
-
+			currentFilterMap = filterMap;
 			switch (type) {
 			case TEACHER:
 				System.out.println("Inne");
@@ -249,8 +269,8 @@ public class DisplayController implements SubControllerAPI {
 						return false;
 					}
 
-					 max = LocalDate.MAX; 
-					 min = LocalDate.MIN;
+					max = LocalDate.MAX;
+					min = LocalDate.MIN;
 
 					if (filterMap.containsKey("FinalDateFrom")) {
 						System.out.println("FinalDateFrom: " + filterMap.get("FinalDateFrom") + ":" + t.getFinalDate());
@@ -404,7 +424,7 @@ public class DisplayController implements SubControllerAPI {
 			tfCheck = (TextField) searchItems.get("ID");
 			if (!tfCheck.getText().isEmpty())
 				activeSearchItems.put("ID", tfCheck.getText());
-			
+
 			tfCheck = (TextField) searchItems.get("Name");
 			if (!tfCheck.getText().isEmpty())
 				activeSearchItems.put("Name", tfCheck.getText());
@@ -434,7 +454,7 @@ public class DisplayController implements SubControllerAPI {
 			break;
 
 		case STUDENT:
-			 tfCheck = (TextField) searchItems.get("ID");
+			tfCheck = (TextField) searchItems.get("ID");
 			if (!tfCheck.getText().isEmpty())
 				activeSearchItems.put("ID", tfCheck.getText());
 
@@ -459,8 +479,7 @@ public class DisplayController implements SubControllerAPI {
 				activeSearchItems.put("BirthDateTo", datePicker.getValue().toString());
 
 			populate(currentSelection, activeSearchItems);
-			
-			
+
 			break;
 
 		}
@@ -471,4 +490,93 @@ public class DisplayController implements SubControllerAPI {
 		this.searchItems = searchItems;
 	}
 
+	public void createContextMenu(EntityType currentSelection, TableRow item, double posX, double posY) {
+		ContextMenu cm = new ContextMenu();
+		MenuItem removeOption = new MenuItem("Remove");
+		removeOption.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				System.out.println("Inne i removeOption");
+				switch (currentSelection) {
+
+				case TEACHER:
+					Teacher removeTeacher = (Teacher) item.getItem();
+					int result = controller.removeById(removeTeacher.getId(), currentSelection);
+					System.out.println("Teacher with ID: " + result + " has been removed");
+					break;
+				case COURSE:
+					Course removeCourse = (Course) item.getItem();
+					result = controller.removeById(removeCourse.getId(), currentSelection);
+					System.out.println("Course with ID: " + result + " has been removed");
+					break;
+				case EDUCATION:
+					Education removeEducation = (Education) item.getItem();
+					result = controller.removeById(removeEducation.getId(), currentSelection);
+					System.out.println("Education with ID: " + result + " has been removed");
+					break;
+				case STUDENT:
+					Student removeStudent = (Student) item.getItem();
+					result = controller.removeById(removeStudent.getId(), currentSelection);
+					System.out.println("Student with ID: " + result + " has been removed");
+					break;
+
+				}
+				controller.refreshLocalData(currentSelection);
+				populate(currentSelection, currentFilterMap);
+			}
+		});
+		MenuItem updateOption = new MenuItem("Update");
+		updateOption.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				try {
+					mainApp.createUpdatePopup(currentSelection, item.getItem());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
+		cm.getItems().addAll(removeOption, updateOption);
+
+		MenuItem addCourse = new MenuItem("Add Course");
+		addCourse.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				mainApp.displayFullInfo(currentSelection, item.getItem());
+				mainApp.displayAssociateView(currentSelection, item.getItem());
+			}
+		});
+//		MenuItem removeCourse = new MenuItem("Remove Course");
+//		MenuItem addTeacher = new MenuItem("Add Teacher");
+//		MenuItem removeTeacher = new MenuItem("Remove Teacher");
+//		MenuItem addStudent = new MenuItem("Add Student");
+//		MenuItem removeStudent = new MenuItem("Remove Student");
+//		MenuItem addEducation = new MenuItem("Add Education");
+//		MenuItem removeEducation = new MenuItem("Remove Education");
+//		
+//		
+//		MenuItem setEducation = new MenuItem("Set Education");
+//		switch (currentSelection) {
+//		case TEACHER:
+//			cm.getItems().addAll(addCourse, removeCourse);
+//			break;
+//
+//		case COURSE:
+//			cm.getItems().addAll(addTeacher, removeTeacher,addEducation,removeEducation);
+//			break;
+//
+//		case EDUCATION:
+//			cm.getItems().addAll(addCourse, removeCourse, addStudent, removeStudent);
+//			break;
+//		case STUDENT:
+//			cm.getItems().addAll(setEducation);
+//			break;
+//		}
+		System.out.println(posX + ":" + item.getLayoutY());
+		cm.show(item.getParent().getScene().getWindow(), posX, posY);
+	}
 }

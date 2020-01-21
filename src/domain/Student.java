@@ -4,12 +4,17 @@
 package domain;
 
 import java.time.LocalDate;
+
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  * @author rober
@@ -35,8 +40,12 @@ public class Student {
 
     @ManyToOne
     private Education education;
+    
+    @Transient
+    private SimpleStringProperty educationProperty;
 
     public Student() {
+    	educationProperty = new SimpleStringProperty();
     }
 
     public Student(String firstName, String lastName, LocalDate birthDate, String email) {
@@ -44,6 +53,8 @@ public class Student {
         this.lastName = lastName;
         this.birthDate = birthDate;
         this.email = email;
+        
+        educationProperty = new SimpleStringProperty(); 
     }
     
     
@@ -52,7 +63,9 @@ public class Student {
         return this.id;
     }
 
-    public void setId(int id) {
+   
+
+	public void setId(int id) {
         this.id = id;
     }
 
@@ -88,17 +101,29 @@ public class Student {
         this.email = email;
     }
 
+    public SimpleStringProperty educationProperty() {
+    	if(education!=null)
+    	educationProperty.set(education.getName());
+    	return educationProperty;
+    }
     public Education getEducation() {
+    	System.out.println("Anropas getEdu");
+
         return this.education;
     }
 
     public void setEducation(Education education) {
         this.education = education;
+        educationProperty.setValue(education.getName());
     }
+    
+
+    
 
     @Override
     public String toString() {
-        return "Student{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate + ", email=" + email + ", education=" + education.getName() + '}';
+        return "Student{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate + ", email=" + email + ", education=" +
+        		((education!=null)?education.getName():"") + '}';
     }
     
 

@@ -157,9 +157,7 @@ public class Controller implements ControllerAPI {
 //		return false;
 //	}
 
-	public void associate(EntityType type, int id, List<Integer> indicies) {
-		System.out.println(indicies);
-		System.out.println(courses);
+	public void associate(EntityType type, int id, List<Integer> indicies, EntityType typeOfAssociation) {
 		switch (type) {
 		case TEACHER:
 			Teacher teacher = teacherJPAImpl.getById(id);
@@ -172,13 +170,61 @@ public class Controller implements ControllerAPI {
 			refreshLocalData(type);
 			break;
 		case COURSE:
+			Course course = courseJPAImpl.getById(id);
+			switch (typeOfAssociation) {
+			case TEACHER:
+				for (Integer index : indicies) {
+					Teacher t = teacherJPAImpl.getById(index);
+					System.out.println(t);
+					course.addTeacher(t);
+				}
+				break;
+
+			case EDUCATION:
+				for (Integer index : indicies) {
+					Education e = educationJPAImpl.getById(index);
+					System.out.println(e);
+					course.addEducation(e);
+				}
+				break;
+			}
 			
+			courseJPAImpl.update(course);
+			refreshLocalData(type);
 			break;
 		case EDUCATION:
+			Education education = educationJPAImpl.getById(id);
+			switch (typeOfAssociation) {
+			case COURSE:
+				for (Integer index : indicies) {
+					Course c = courseJPAImpl.getById(index);
+					System.out.println(c);
+					education.addCourse(c);
+				}
+				break;
 
+			case STUDENT:
+				for (Integer index : indicies) {
+					Student s = studentJPAImpl.getById(index);
+					System.out.println(s);
+					education.addStudent(s);
+				}
+				break;
+			}
+			
+			educationJPAImpl.update(education);
+			refreshLocalData(type);
 			break;
 		case STUDENT:
-
+			Student s = studentJPAImpl.getById(id);
+			for (Integer index : indicies) {
+				Education e = educationJPAImpl.getById(index);
+				System.out.println(e);
+				s.setEducation(e);
+			}
+			
+			studentJPAImpl.update(s);
+			refreshLocalData(type);
 			break;
 
 		default:
