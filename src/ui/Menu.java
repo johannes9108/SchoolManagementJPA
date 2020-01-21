@@ -71,7 +71,11 @@ public class Menu {
     ///////PRINT FUNCTIONS/////////////////////
     static void printsListOfStudents(List<Student> students) {
         for (Student student : students) {
-            System.out.println("ID: " + student.getId() + " " + fixed(student.getBirthDate().toString(), 15) + " " + fixed(student.getEmail(), 20) + " " + fixed(student.getFirstName(), 15) + " " + fixed(student.getLastName(), 15) + "      Education: " + student.getEducation().getId());
+            if (student.getEducation() != null) {
+                System.out.println("ID: " + student.getId() + " " + fixed(student.getBirthDate().toString(), 15) + " " + fixed(student.getEmail(), 20) + " " + fixed(student.getFirstName(), 15) + " " + fixed(student.getLastName(), 15) + "      Education: " + student.getEducation().getId());
+            } else {
+                System.out.println("ID: " + student.getId() + " " + fixed(student.getBirthDate().toString(), 15) + " " + fixed(student.getEmail(), 20) + " " + fixed(student.getFirstName(), 15) + " " + fixed(student.getLastName(), 15) + "      Education: ingen");
+            }
         }
     }
 
@@ -306,12 +310,24 @@ public class Menu {
                 loop = false;
                 Education oldEducation = student.getEducation();
                 Education newEducation = controller.getById(newEducationID, EntityType.EDUCATION);
-//                newEducation.addStudent(student);
-                student.setEducation(newEducation);
-                if (controller.update(student) != -1) {
-//                    controller.update(newEducation);
-//                    controller.update(oldEducation);
-                    System.out.println("Utbildnig för student " + student.getFirstName() + " " + student.getLastName() + " (id:" + student.getId() + ") har uppdaterats till " + student.getEducation().getName() + " (id:" + student.getEducation().getId() + ")");
+                
+                newEducation.addStudent(student);
+//                student.setEducation(newEducation); /* <-- This can also be used instead of 'newEducation.addStudent()' Impotant is that the old education is updated/merged if the Student had an Education since before. This to update the list  of students on that Education*/
+
+                if (controller.update(newEducation) != -1) {
+
+                    if (oldEducation != null) {
+                        if (controller.update(oldEducation) != -1) {
+                            System.out.println("Utbildnig för student " + student.getFirstName() + " " + student.getLastName() + " (id:" + student.getId() + ") har uppdaterats till " + student.getEducation().getName() + " (id:" + student.getEducation().getId() + ")");
+                        } else {
+                            System.out.println("Utbildnig för student " + student.getFirstName() + " " + student.getLastName() + " (id:" + student.getId() + ") har uppdaterats till " + student.getEducation().getName() + " (id:" + student.getEducation().getId() + "). OBS! Studenten kan finnas kvar i listan för gamla utbildningen.");
+                        }
+                    } else {
+                        System.out.println("Utbildnig för student " + student.getFirstName() + " " + student.getLastName() + " (id:" + student.getId() + ") har uppdaterats till " + student.getEducation().getName() + " (id:" + student.getEducation().getId() + ")");
+                    }
+
+                } else {
+                    System.out.println("FEL: Utbildnig för student " + student.getFirstName() + " " + student.getLastName() + " (id:" + student.getId() + ") kunde inte uppdateras!");
                 }
                 showStudents();
             } else if (newEducationID == 0) {

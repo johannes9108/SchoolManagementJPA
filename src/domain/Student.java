@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,7 +36,7 @@ public class Student {//implements Serializable {
     @Basic
     private String email;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST})
+    @ManyToOne (cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.DETACH})
     private Education education;
 
     public Student() {
@@ -97,9 +98,9 @@ public class Student {//implements Serializable {
         this.education = null;
     }
     public void setEducation(Education education) {
-        if (this.education != null) {this.education.internalRemoveStudent(this);}
-        this.education = education;
-        if (education != null) {education.internalAddStudent(this);}
+        if (this.education != null) {this.education.internalRemoveStudent(this);} //check if student has education from before, and if so remove this Student from that Educationslist of students
+        this.education = education; //Does set the variable Education to the Educastion provided
+        if (education != null) {education.internalAddStudent(this);} //as long as the Education provided to be set is not just value "null", the student is added to the list of students on the provided Education
 //        education.getStudents().add(this);
     }
     

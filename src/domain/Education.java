@@ -39,7 +39,7 @@ public class Education {
     @Basic
     private LocalDate finalDate;
 
-    @OneToMany(mappedBy = "education", cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "education", cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.DETACH}, fetch = FetchType.LAZY)
     private List<Student> students;
 
     @ManyToMany
@@ -157,11 +157,11 @@ public class Education {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Education{" + "id=" + id + ", name=" + name + ", faculty=" + faculty + ", startDate=" + startDate + ", finalDate=" + finalDate + ", Courses=");
-        courses.forEach(t -> sb.append(t.getName() + ", "));
-        sb.append("\nStudents=");
-        students.forEach(t -> sb.append(t.getFirstName() + " " + t.getLastName() + ", "));
-        sb.delete(sb.length() - 2, sb.length());
-        sb.append('}');
+//        courses.forEach(t -> sb.append(t.getName() + ", "));
+//        sb.append("\nStudents=");
+//        students.forEach(t -> sb.append(t.getFirstName() + " " + t.getLastName() + ", "));
+//        sb.delete(sb.length() - 2, sb.length());
+//        sb.append('}');
         return sb.toString();
     }
 }
