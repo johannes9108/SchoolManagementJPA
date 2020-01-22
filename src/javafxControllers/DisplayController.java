@@ -579,4 +579,8 @@ public class DisplayController implements SubControllerAPI {
 		System.out.println(posX + ":" + item.getLayoutY());
 		cm.show(item.getParent().getScene().getWindow(), posX, posY);
 	}
+
+	public void refreshTableView() {
+		populate(currentSelection, null);
+	}
 }

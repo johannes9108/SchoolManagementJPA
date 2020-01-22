@@ -606,56 +606,116 @@ public class SchoolManagementSystemJavaFX extends Application {
 		EntityTransaction tx = em.getTransaction();
 		tx.begin();
 
-		Student student = new Student("Johannes", "Döpare", LocalDate.of(1999, 01, 31), "johannes@gmail.com");
-		Student student1 = new Student("Nicolas", "Johansson", LocalDate.of(1987, 03, 17), "nicolas@gmail.com");
-		Student student2 = new Student("Robert", "Drönare", LocalDate.of(1983, 12, 25), "rob@gmail.com");
+		// Students owned by Education
+		
+		Student student1 = new Student("Johannes", "D�pare", LocalDate.of(1980, 5, 31), "johannes@gmail.com");
+		Student student2 = new Student("Nicolas", "Loggins", LocalDate.of(1965, 3, 17), "nicolas@gmail.com");
+		Student student3 = new Student("Robert", "Dr�pare", LocalDate.of(1983, 12, 25), "rober@gmail.com");
+		Student student4 = new Student("Anna", "Andersson", LocalDate.of(1990, 3, 4), "anna@gmail.com");
+		Student student5 = new Student("John", "Stig", LocalDate.of(1987, 2, 27), "john@gmail.com");
+		Student student6 = new Student("Lukas", "Myren", LocalDate.of(1955, 4, 20), "lukas@gmail.com");
+		Student student7 = new Student("Sofia", "Hansen", LocalDate.of(2005, 3, 3), "sofia@gmail.com");
+		Student student8 = new Student("Zara", "Larsson", LocalDate.of(1930, 10, 12), "zara@gmail.com");
+		Student student9 = new Student("Wilma", "Jackson", LocalDate.of(1966, 12, 29), "wilma@gmail.com");
+				
+		// Teachers owned by Courses
+		Teacher teacher1 = new Teacher("Bita", "Jabbari", LocalDate.of(1968, 9, 13), "bita@gmail.com");
+		Teacher teacher2 = new Teacher("Ulf", "Bilting", LocalDate.of(1955, 8, 14), "ulf@gmail.com");
+		Teacher teacher3 = new Teacher("Ali", "Hemez", LocalDate.of(1976, 7, 15), "ali@gmail.com");
+		Teacher teacher4 = new Teacher("Nypan", "H�k", LocalDate.of(1945, 6, 16), "nypan@gmail.com");
+		Teacher teacher5 = new Teacher("Wim", "Koppear", LocalDate.of(1988, 5, 17), "wim@gmail.com");
+		Teacher teacher6 = new Teacher("Kesse", "Mannez", LocalDate.of(1995, 4, 18), "kesse@gmail.com");
+		Teacher teacher7 = new Teacher("Siv", "Namme", LocalDate.of(1950, 3, 19), "siv@gmail.com");
+		Teacher teacher8 = new Teacher("Linda", "Inton", LocalDate.of(1960, 2, 20), "linda@gmail.com");
+		Teacher teacher9 = new Teacher("Tomas", "Safari", LocalDate.of(1970, 1, 21), "tomas@gmail.com");
 
-		em.persist(student);
-		em.persist(student1);
-		em.persist(student2);
+		
+		//Courses own both Education/Teachers
+		Course course1 = new Course("Spanska A", "Språk", "junior", 5);
+		Course course2 = new Course("Spanska B", "Språk", "senior", 10);
+		Course course3 = new Course("Engelska A", "Språk", "junior", 5);
+		Course course4 = new Course("Matematik C", "Språk", "senior", 10);
+		Course course5 = new Course("Filosofi GrundKurs", "Språk", "junior", 5);
+		Course course6 = new Course("Biologi B", "Språk", "senior", 10);
+		
+		// Education owns students but are owned by Course
+		Education education1 = new Education("Spr�kvetare", "Spr�kvetenskap", LocalDate.of(2015, 01, 31),LocalDate.of(2019, 7, 1));
+		Education education2 = new Education("Systemutvecklare", "Coding", LocalDate.of(2016, 01, 31), LocalDate.of(2018, 6, 28));
+		Education education3 = new Education("Naturvetare", "Naturvetenskap", LocalDate.of(2017, 01, 31),LocalDate.of(2022, 6, 25));
+		Education education4 = new Education("Lektor", "Humaniora", LocalDate.of(2016, 01, 31), LocalDate.of(2020, 6, 28));
+		
 
-		Teacher t1 = new Teacher("Bita", "Jabbari", LocalDate.of(1980, 07, 13), "bita@gmail.com");
-		Teacher t2 = new Teacher("Ulf", "Snulf ", LocalDate.of(1913, 07, 13), "ulf@gmail.com");
-		Teacher t3 = new Teacher("Bita", "Jabbari", LocalDate.of(1980, 07, 13), "bita@gmail.com");
-		Teacher t4 = new Teacher("Ulf", "Snulf ", LocalDate.of(1913, 07, 13), "ulf@gmail.com");
-		Teacher t5 = new Teacher("Bita", "Jabbari", LocalDate.of(1980, 07, 13), "bita@gmail.com");
-		Teacher t6 = new Teacher("Ulf", "Snulf ", LocalDate.of(1913, 07, 13), "ulf@gmail.com");
+		education1.addStudent(student1);
+		education1.addStudent(student2);
+		education2.addStudent(student3);
+		education2.addStudent(student4);
+		education3.addStudent(student5);
+		education3.addStudent(student6);
+		education4.addStudent(student7);
+		education4.addStudent(student8);
+		
+		// THESE ARENT NEEDED SINCE COURSE HAS CASCADEPERSIST
+//		em.persist(education1);
+//		em.persist(education2);
+//		em.persist(education3);
+//		em.persist(education4);
+		
+		em.persist(student9);
+		
+		
+		
+		teacher1.addCourse(course1);
+		teacher1.addCourse(course2);
+		teacher1.addCourse(course3);
+		teacher1.addCourse(course4);
+		
+		teacher2.addCourse(course3);
+		teacher2.addCourse(course4);
+		teacher2.addCourse(course5);
+		
+		
+		teacher3.addCourse(course6);
+		teacher4.addCourse(course2);
+		teacher5.addCourse(course4);
+		teacher6.addCourse(course5);
+		teacher7.addCourse(course6);
+		
+		teacher8.addCourse(course6);
+		teacher8.addCourse(course5);
+		teacher8.addCourse(course1);
+		
+		teacher9.addCourse(course6);
+		teacher9.addCourse(course2);
 
-		em.persist(t1);
-		em.persist(t2);
-		em.persist(t3);
-		em.persist(t4);
-		em.persist(t5);
-		em.persist(t6);
-
-		Course c1 = new Course("Spanska A", "Språk", "junior", 5);
-		Course c2 = new Course("Spanska B", "Språk", "senior", 10);
-
-		em.persist(c1);
-		em.persist(c2);
-
-		Education e1 = new Education("Språkexpert", "Språkvetenskap", LocalDate.of(1999, 01, 31),
-				LocalDate.of(1999, 02, 28));
-		Education e2 = new Education("Javaexpert", "Coding", LocalDate.of(1999, 01, 31), LocalDate.of(1999, 02, 28));
-
-		em.persist(e1);
-		em.persist(e2);
-
-		t1.addCourse(c1);
-		t1.addCourse(c2);
-
-		t2.addCourse(c1);
-
-		e1.addCourse(c2);
-
-		e2.addCourse(c2);
-		e2.addCourse(c1);
-
-		e1.addStudent(student);
-		e1.addStudent(student1);
-
-		e2.addStudent(student1);
-		e2.addStudent(student2);
+		//Connect educations with course so they'll be persisted along with the courses
+		
+		course1.addEducation(education1);
+		course1.addEducation(education2);
+		course1.addEducation(education3);
+		
+		course2.addEducation(education2);
+		course2.addEducation(education3);
+		course2.addEducation(education4);
+		
+		course3.addEducation(education1);
+		course4.addEducation(education4);
+		
+		course5.addEducation(education3);
+		course6.addEducation(education1);
+		course5.addEducation(education1);
+		course6.addEducation(education3);
+		
+		
+		
+		em.persist(course1);
+		em.persist(course2);
+		em.persist(course3);
+		em.persist(course4);
+		em.persist(course5);
+		em.persist(course6);
+		
+		
+		
 
 		tx.commit();
 	}
@@ -901,6 +961,10 @@ public class SchoolManagementSystemJavaFX extends Application {
 			popupStage.close();
 			
 		}
+	}
+
+	public void refreshTableView() {
+		displayController.refreshTableView();
 	}
 
 }

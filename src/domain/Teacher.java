@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.PreRemove;
 
 /**
  * @author rober
@@ -41,6 +42,7 @@ public class Teacher {
     public Teacher() {
         courses = new ArrayList<>();
     }
+    
 
     public Teacher(String firstName, String lastName, LocalDate birthDate, String email) {
         this.firstName = firstName;
@@ -114,6 +116,16 @@ public class Teacher {
         course.removeTeacher(this);
 
     }
+    
+    @PreRemove
+    public void clearBindingsFromTeacher() {
+    	System.out.println("C size: " + courses.size());
+    	for(Course course: courses) {
+    		course.getTeachers().remove(this);
+    	}
+    	courses.clear();
+    }
+    
 
     @Override
     public String toString() {

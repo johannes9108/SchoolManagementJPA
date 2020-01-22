@@ -44,15 +44,16 @@ public class TeacherJPAImpl implements SchoolManagementDAO<Teacher> {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            Teacher teacherUpdate = em.find(Teacher.class, teacher.getId());
-            teacherUpdate.setFirstName(teacher.getFirstName());
-            teacherUpdate.setLastName(teacher.getLastName());
-            teacherUpdate.setEmail(teacher.getEmail());
-            teacherUpdate.setBirthDate(teacher.getBirthDate());
-            teacherUpdate.setCourses(teacher.getCourses());
-            System.out.println(teacherUpdate);
+            em.merge(teacher);
+//            Teacher teacherUpdate = em.find(Teacher.class, teacher.getId());
+//            teacherUpdate.setFirstName(teacher.getFirstName());
+//            teacherUpdate.setLastName(teacher.getLastName());
+//            teacherUpdate.setEmail(teacher.getEmail());
+//            teacherUpdate.setBirthDate(teacher.getBirthDate());
+//            teacherUpdate.setCourses(teacher.getCourses());
+//            System.out.println(teacherUpdate);
             tx.commit();
-            return teacherUpdate.getId();
+            return teacher.getId();
         } catch (PersistenceException exception) {
             System.out.println("Couldn't update the object" + teacher);
             return -1;
@@ -104,11 +105,12 @@ public class TeacherJPAImpl implements SchoolManagementDAO<Teacher> {
     public int removeById(int id
     ) {
         em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
         try {
-            em.getTransaction().begin();
-            Teacher teacherToRemove = em.find(Teacher.class, id);
-            em.remove(teacherToRemove);
-            em.getTransaction().commit();
+            tx.begin();
+            Teacher teacher = em.find(Teacher.class, id);
+            em.remove(teacher);
+            tx.commit();
             return id;
         } catch (Exception e) {
             System.out.println(e);

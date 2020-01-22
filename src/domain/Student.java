@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.PreRemove;
 import javax.persistence.Transient;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -106,6 +107,11 @@ public class Student {
     	educationProperty.set(education.getName());
     	return educationProperty;
     }
+    
+    @PreRemove
+    public void clearBindingsFromStudent() {
+    	education.getStudents().remove(this);
+    }
     public Education getEducation() {
     	System.out.println("Anropas getEdu");
 
@@ -114,6 +120,7 @@ public class Student {
 
     public void setEducation(Education education) {
         this.education = education;
+        if(education!=null)
         educationProperty.setValue(education.getName());
     }
     

@@ -161,9 +161,9 @@ public class Controller implements ControllerAPI {
 		switch (type) {
 		case TEACHER:
 			Teacher teacher = teacherJPAImpl.getById(id);
+			teacher.clearBindingsFromTeacher();
 			for (Integer index : indicies) {
 				Course c = courseJPAImpl.getById(index);
-				System.out.println(c);
 				teacher.addCourse(c);
 			}
 			teacherJPAImpl.update(teacher);
@@ -173,17 +173,17 @@ public class Controller implements ControllerAPI {
 			Course course = courseJPAImpl.getById(id);
 			switch (typeOfAssociation) {
 			case TEACHER:
+				course.clearTeacherBindingsFromCourse();
 				for (Integer index : indicies) {
 					Teacher t = teacherJPAImpl.getById(index);
-					System.out.println(t);
 					course.addTeacher(t);
 				}
 				break;
 
 			case EDUCATION:
+				course.clearEducationBindingsFromCourse();
 				for (Integer index : indicies) {
 					Education e = educationJPAImpl.getById(index);
-					System.out.println(e);
 					course.addEducation(e);
 				}
 				break;
@@ -196,17 +196,17 @@ public class Controller implements ControllerAPI {
 			Education education = educationJPAImpl.getById(id);
 			switch (typeOfAssociation) {
 			case COURSE:
+				education.clearCourseBindingsFromEducation();
 				for (Integer index : indicies) {
 					Course c = courseJPAImpl.getById(index);
-					System.out.println(c);
 					education.addCourse(c);
 				}
 				break;
 
 			case STUDENT:
+				education.clearStudentBindingsFromEducation();
 				for (Integer index : indicies) {
 					Student s = studentJPAImpl.getById(index);
-					System.out.println(s);
 					education.addStudent(s);
 				}
 				break;
@@ -219,7 +219,6 @@ public class Controller implements ControllerAPI {
 			Student s = studentJPAImpl.getById(id);
 			for (Integer index : indicies) {
 				Education e = educationJPAImpl.getById(index);
-				System.out.println(e);
 				s.setEducation(e);
 			}
 			
@@ -233,5 +232,25 @@ public class Controller implements ControllerAPI {
 		
 		
 	}
+
+	public void disAssociate(EntityType type, int i, List<Integer> indicies, EntityType course) {
+		switch(type) {
+		case TEACHER:
+			
+			break;
+		case COURSE:
+			
+			break;
+		case EDUCATION:
+			
+			break;
+		case STUDENT:
+			
+			break;
+		}
+		
+		
+	}
+
 
 }
