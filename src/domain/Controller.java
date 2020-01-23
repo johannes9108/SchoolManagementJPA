@@ -157,33 +157,36 @@ public class Controller implements ControllerAPI {
 //		return false;
 //	}
 
-	public void associate(EntityType type, int id, List<Integer> indicies, EntityType typeOfAssociation) {
+	public void associate(EntityType type, int id, List<Integer> listItemIds, EntityType typeOfAssociation) {
 		switch (type) {
 		case TEACHER:
 			Teacher teacher = teacherJPAImpl.getById(id);
 			teacher.clearBindingsFromTeacher();
-			for (Integer index : indicies) {
-				Course c = courseJPAImpl.getById(index);
+			teacherJPAImpl.update(teacher);
+			for (Integer itemId : listItemIds) {
+				Course c = courseJPAImpl.getById(itemId);
+				System.out.println(c);
 				teacher.addCourse(c);
 			}
 			teacherJPAImpl.update(teacher);
 			refreshLocalData(type);
+			refreshLocalData(typeOfAssociation);
 			break;
 		case COURSE:
 			Course course = courseJPAImpl.getById(id);
 			switch (typeOfAssociation) {
 			case TEACHER:
 				course.clearTeacherBindingsFromCourse();
-				for (Integer index : indicies) {
-					Teacher t = teacherJPAImpl.getById(index);
+				for (Integer itemId : listItemIds) {
+					Teacher t = teacherJPAImpl.getById(itemId);
 					course.addTeacher(t);
 				}
 				break;
 
 			case EDUCATION:
 				course.clearEducationBindingsFromCourse();
-				for (Integer index : indicies) {
-					Education e = educationJPAImpl.getById(index);
+				for (Integer itemId : listItemIds) {
+					Education e = educationJPAImpl.getById(itemId);
 					course.addEducation(e);
 				}
 				break;
@@ -197,16 +200,16 @@ public class Controller implements ControllerAPI {
 			switch (typeOfAssociation) {
 			case COURSE:
 				education.clearCourseBindingsFromEducation();
-				for (Integer index : indicies) {
-					Course c = courseJPAImpl.getById(index);
+				for (Integer itemId : listItemIds) {
+					Course c = courseJPAImpl.getById(itemId);
 					education.addCourse(c);
 				}
 				break;
 
 			case STUDENT:
 				education.clearStudentBindingsFromEducation();
-				for (Integer index : indicies) {
-					Student s = studentJPAImpl.getById(index);
+				for (Integer itemId : listItemIds) {
+					Student s = studentJPAImpl.getById(itemId);
 					education.addStudent(s);
 				}
 				break;
@@ -217,8 +220,8 @@ public class Controller implements ControllerAPI {
 			break;
 		case STUDENT:
 			Student s = studentJPAImpl.getById(id);
-			for (Integer index : indicies) {
-				Education e = educationJPAImpl.getById(index);
+			for (Integer itemId : listItemIds) {
+				Education e = educationJPAImpl.getById(itemId);
 				s.setEducation(e);
 			}
 			

@@ -45,15 +45,16 @@ public class CourseJPAImpl implements SchoolManagementDAO<Course> {
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
-			Course courseUpdate = em.find(Course.class, course.getId());
-			courseUpdate.setName(course.getName());
-			courseUpdate.setDifficulty(course.getDifficulty());
-			courseUpdate.setSubject(course.getSubject());
-			courseUpdate.setEducations(course.getEducations());
-			courseUpdate.setPoints(course.getPoints());
-			courseUpdate.setTeachers(course.getTeachers());
+			em.merge(course);
+//			Course courseUpdate = em.find(Course.class, course.getId());
+//			courseUpdate.setName(course.getName());
+//			courseUpdate.setDifficulty(course.getDifficulty());
+//			courseUpdate.setSubject(course.getSubject());
+//			courseUpdate.setEducations(course.getEducations());
+//			courseUpdate.setPoints(course.getPoints());
+//			courseUpdate.setTeachers(course.getTeachers());
 			tx.commit();
-			return courseUpdate.getId();
+			return course.getId();
 		} catch (PersistenceException exception) {
 			System.out.println("Couldn't update the object" + course);
 			return -1;

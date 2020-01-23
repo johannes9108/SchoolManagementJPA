@@ -366,7 +366,11 @@ public class CRUDController implements SubControllerAPI {
 					Teacher teacher = new Teacher(firstNameField.getText(), lastNameField.getText(), birthDatePicker.getValue(), emailField.getText());
 					teacher.setId(currentItemId);
 					controller.update(teacher);
-					controller.associate(currentSelection, currentItemId, courseListView.getSelectionModel().getSelectedIndices(), EntityType.COURSE);
+					System.out.println("Currentselection: " + currentSelection);
+					System.out.println("currentItemId: " + currentItemId);
+					System.out.println("Currentselection: " + courseListView.getSelectionModel().getSelectedItems());
+					ArrayList<Integer> listItemIds = (ArrayList<Integer>) convertItemsToIDs(courseListView);
+					controller.associate(currentSelection, currentItemId, listItemIds, EntityType.COURSE);
 					controller.refreshLocalData(EntityType.TEACHER);
 					controller.refreshLocalData(EntityType.COURSE);
 					mainApp.refreshTableView();
