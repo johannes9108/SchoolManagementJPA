@@ -38,10 +38,10 @@ public class Education {
     @Basic
     private LocalDate finalDate;
 
-    @OneToMany(mappedBy = "education",cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @OneToMany(mappedBy = "education",cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
     private List<Student> students;
 
-    @ManyToMany(mappedBy = "educations", cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @ManyToMany(mappedBy = "educations", cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
     private List<Course> courses;
 
     public Education(String name, String faculty, LocalDate startDate, LocalDate finalDate) {
@@ -55,14 +55,8 @@ public class Education {
     }
 
     public Education() {
-        students = new ArrayList<>();
-        courses = new ArrayList<>();
         
     }
-
-    
-    
-    
 
     public int getId() {
         return this.id;
@@ -116,7 +110,7 @@ public class Education {
     }
 
     public void addStudent(Student student) {
-        getStudents().add(student);
+        students.add(student);
         student.setEducation(this);
     }
 
@@ -128,23 +122,23 @@ public class Education {
     	clearCourseBindingsFromEducation();
     }
 
-	public void clearCourseBindingsFromEducation() {
+	public List<Course> clearCourseBindingsFromEducation() {
 		System.out.println("clearCourseBindingsFromEducation()");
 		for(Course course: courses) {
     		course.getEducations().remove(this);
     	}
-		getCourses().clear();
+		return courses;
 	}
 
-	public void clearStudentBindingsFromEducation() {
+	public List<Student> clearStudentBindingsFromEducation() {
 		System.out.println("clearStudentBindingsFromEducation()");
 		for (Student student : students) {
 			student.setEducation(null);
 		}
-		getStudents().clear();
+		return students;
 	}
     public void removeStudent(Student student) {
-        getStudents().remove(student);
+        students.remove(student);
         student.setEducation(null);
     }
 
@@ -160,12 +154,12 @@ public class Education {
     }
 
     public void addCourse(Course course) {
-        getCourses().add(course);
+        courses.add(course);
         course.getEducations().add(this);
     }
 
     public void removeCourse(Course course) {
-        getCourses().remove(course);
+        courses.remove(course);
         course.getEducations().remove(this);
     }
 

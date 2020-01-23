@@ -161,99 +161,153 @@ public class Controller implements ControllerAPI {
 		switch (type) {
 		case TEACHER:
 			Teacher teacher = teacherJPAImpl.getById(id);
-			teacher.clearBindingsFromTeacher();
-			teacherJPAImpl.update(teacher);
+			List<Course> coursesToBeMerged = teacher.clearBindingsFromTeacher();
+
+			coursesToBeMerged.forEach(c -> {
+				courseJPAImpl.update(c);
+			});
+			coursesToBeMerged.clear();
 			for (Integer itemId : listItemIds) {
 				Course c = courseJPAImpl.getById(itemId);
-				System.out.println(c);
 				teacher.addCourse(c);
+				courseJPAImpl.update(c);
 			}
+
 			teacherJPAImpl.update(teacher);
-			refreshLocalData(type);
-			refreshLocalData(typeOfAssociation);
+
+//			Teacher teacher = teacherJPAImpl.getById(id);
+//			List<Course> coursesToBeMerged = teacher.clearBindingsFromTeacher();
+//			
+//			coursesToBeMerged.forEach(c->{
+//				courseJPAImpl.update(c);
+//			});
+//			coursesToBeMerged.clear();
+//			for (Integer itemId : listItemIds) {
+//				Course c = courseJPAImpl.getById(itemId);
+//				teacher.addCourse(c);
+//				courseJPAImpl.update(c);
+//			}
+//			
+//			teacherJPAImpl.update(teacher);
+//			refreshLocalData(type);
+//			refreshLocalData(typeOfAssociation);
 			break;
 		case COURSE:
 			Course course = courseJPAImpl.getById(id);
+
 			switch (typeOfAssociation) {
 			case TEACHER:
-				course.clearTeacherBindingsFromCourse();
+				List<Teacher> teachersToBeMerged = course.clearTeacherBindingsFromCourse();
+
+				teachersToBeMerged.forEach(t -> {
+					teacherJPAImpl.update(t);
+				});
+				teachersToBeMerged.clear();
 				for (Integer itemId : listItemIds) {
 					Teacher t = teacherJPAImpl.getById(itemId);
 					course.addTeacher(t);
+					teacherJPAImpl.update(t);
 				}
+
 				break;
 
 			case EDUCATION:
-				course.clearEducationBindingsFromCourse();
+				List<Education> educationsToBeMerged = course.clearEducationBindingsFromCourse();
+
+				educationsToBeMerged.forEach(e -> {
+					educationJPAImpl.update(e);
+				});
+				educationsToBeMerged.clear();
 				for (Integer itemId : listItemIds) {
 					Education e = educationJPAImpl.getById(itemId);
 					course.addEducation(e);
+					educationJPAImpl.update(e);
 				}
+
 				break;
 			}
-			
 			courseJPAImpl.update(course);
-			refreshLocalData(type);
+
 			break;
 		case EDUCATION:
 			Education education = educationJPAImpl.getById(id);
+
 			switch (typeOfAssociation) {
 			case COURSE:
-				education.clearCourseBindingsFromEducation();
+				coursesToBeMerged = education.clearCourseBindingsFromEducation();
+
+				coursesToBeMerged.forEach(t -> {
+					courseJPAImpl.update(t);
+				});
+				coursesToBeMerged.clear();
 				for (Integer itemId : listItemIds) {
 					Course c = courseJPAImpl.getById(itemId);
 					education.addCourse(c);
+					courseJPAImpl.update(c);
 				}
+
 				break;
 
 			case STUDENT:
-				education.clearStudentBindingsFromEducation();
+				List<Student> studentsToBeMerged = education.clearStudentBindingsFromEducation();
+
+				studentsToBeMerged.forEach(s -> {
+					studentJPAImpl.update(s);
+				});
+				studentsToBeMerged.clear();
 				for (Integer itemId : listItemIds) {
 					Student s = studentJPAImpl.getById(itemId);
 					education.addStudent(s);
+					studentJPAImpl.update(s);
 				}
+
 				break;
 			}
-			
 			educationJPAImpl.update(education);
-			refreshLocalData(type);
 			break;
 		case STUDENT:
 			Student s = studentJPAImpl.getById(id);
-			for (Integer itemId : listItemIds) {
-				Education e = educationJPAImpl.getById(itemId);
+			Education oldEducation = s.clearBindingsFromStudent();
+			if(oldEducation!=null)
+			educationJPAImpl.update(oldEducation);
+			System.out.println(oldEducation);
+
+			if(listItemIds.size()>0) {
+				Education e = educationJPAImpl.getById(listItemIds.get(0));
+				e.addStudent(s);
 				s.setEducation(e);
+				educationJPAImpl.update(e);
 			}
-			
+			else {
+				s.setEducation(null);
+			}
 			studentJPAImpl.update(s);
-			refreshLocalData(type);
 			break;
 
 		default:
 			break;
 		}
-		
-		
+
+		refreshLocalData(type);
+		refreshLocalData(typeOfAssociation);
 	}
 
 	public void disAssociate(EntityType type, int i, List<Integer> indicies, EntityType course) {
-		switch(type) {
+		switch (type) {
 		case TEACHER:
-			
+
 			break;
 		case COURSE:
-			
+
 			break;
 		case EDUCATION:
-			
+
 			break;
 		case STUDENT:
-			
+
 			break;
 		}
-		
-		
-	}
 
+	}
 
 }

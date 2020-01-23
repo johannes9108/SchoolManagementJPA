@@ -47,6 +47,8 @@ public class CRUDController implements SubControllerAPI {
 	private TextField emailField;
 	@FXML
 	private DatePicker birthDatePicker;
+	
+	private ChoiceBox<ListItem> educationChoiceBox;
 
 	public void setFirstNameField(TextField firstNameField) {
 		this.firstNameField = firstNameField;
@@ -184,6 +186,7 @@ public class CRUDController implements SubControllerAPI {
 				EntityType currentType = convertIndexToEnum(newValue.intValue());
 				insertCorrectAddView(currentType);
 				currentSelection = currentType;
+
 			}
 		});
 
@@ -328,25 +331,7 @@ public class CRUDController implements SubControllerAPI {
 		}
 	}
 
-	public void handleUpdate() {
-		
-		switch(currentSelection) {
-		
-		case TEACHER:
-			System.out.println("UPDATE");
-//		
-//			firstNameField.getText();
-//			emailField.getText();
-//			
-//			Teacher teacher = controller.getById(ID, EntityType.TEACHER);
-//			controller.associate(currentSelection, id, indicies);
-			
-			
-			break;
-		}
-		
-		
-	}
+
 
 	public void setUpdateButton(Button updateButton) {
 		this.updateButton = updateButton;
@@ -357,35 +342,90 @@ public class CRUDController implements SubControllerAPI {
 				switch (currentSelection) {
 
 				case TEACHER:
-					System.out.println(firstNameField.getText());
-					System.out.println(lastNameField.getText());
-					System.out.println(birthDatePicker.getValue());
-					System.out.println(emailField.getText());
-					System.out.println(courseListView.getSelectionModel().getSelectedIndices());
+//					System.out.println(firstNameField.getText());
+//					System.out.println(lastNameField.getText());
+//					System.out.println(birthDatePicker.getValue());
+//					System.out.println(emailField.getText());
+//					System.out.println(courseListView.getSelectionModel().getSelectedIndices());
 					System.out.println("ID: " + currentItemId);
-					Teacher teacher = new Teacher(firstNameField.getText(), lastNameField.getText(), birthDatePicker.getValue(), emailField.getText());
-					teacher.setId(currentItemId);
+					Teacher teacher = controller.getById(currentItemId, currentSelection);
+					teacher.setFirstName(firstNameField.getText());
+					teacher.setLastName(lastNameField.getText());
+					teacher.setBirthDate(birthDatePicker.getValue());
+					teacher.setEmail(emailField.getText());
 					controller.update(teacher);
 					System.out.println("Currentselection: " + currentSelection);
 					System.out.println("currentItemId: " + currentItemId);
 					System.out.println("Currentselection: " + courseListView.getSelectionModel().getSelectedItems());
 					ArrayList<Integer> listItemIds = (ArrayList<Integer>) convertItemsToIDs(courseListView);
+					System.out.println("Balle balle " + listItemIds);
 					controller.associate(currentSelection, currentItemId, listItemIds, EntityType.COURSE);
-					controller.refreshLocalData(EntityType.TEACHER);
-					controller.refreshLocalData(EntityType.COURSE);
+					
 					mainApp.refreshTableView();
 					break;
 
 				case COURSE:
-
+					System.out.println("ID: " + currentItemId);
+					Course course = controller.getById(currentItemId, currentSelection);
+					
+					course.setName(nameField.getText());
+					course.setSubject(subjectField.getText());
+					course.setDifficulty(difficultyField.getText());
+					course.setPoints(Integer.parseInt(pointsField.getText()));
+					controller.update(course);
+					System.out.println("Currentselection: " + currentSelection);
+					System.out.println("currentItemId: " + currentItemId);
+					System.out.println("Currentselection: " + teacherListView.getSelectionModel().getSelectedItems());
+					System.out.println("Currentselection: " + educationListView.getSelectionModel().getSelectedItems());
+					listItemIds = (ArrayList<Integer>) convertItemsToIDs(teacherListView);
+					controller.associate(currentSelection, currentItemId, listItemIds, EntityType.TEACHER);
+					listItemIds = (ArrayList<Integer>) convertItemsToIDs(educationListView);
+					controller.associate(currentSelection, currentItemId, listItemIds, EntityType.EDUCATION);
+					mainApp.refreshTableView();
 					break;
 
 				case EDUCATION:
 
+					System.out.println("ID: " + currentItemId);
+					Education education = controller.getById(currentItemId, currentSelection);
+					
+					education.setName(nameField.getText());
+					education.setFaculty(facultyField.getText());
+					education.setStartDate(startDate.getValue());
+					education.setFinalDate(finalDate.getValue());
+					controller.update(education);
+					System.out.println("Currentselection: " + currentSelection);
+					System.out.println("currentItemId: " + currentItemId);
+					System.out.println("Currentselection: " + courseListView.getSelectionModel().getSelectedItems());
+					System.out.println("Currentselection: " + studentListView.getSelectionModel().getSelectedItems());
+					listItemIds = (ArrayList<Integer>) convertItemsToIDs(courseListView);
+					controller.associate(currentSelection, currentItemId, listItemIds, EntityType.COURSE);
+					listItemIds = (ArrayList<Integer>) convertItemsToIDs(studentListView);
+					controller.associate(currentSelection, currentItemId, listItemIds, EntityType.STUDENT);
+					mainApp.refreshTableView();
+					
 					break;
 
 				case STUDENT:
+					System.out.println("ID: " + currentItemId);
+					Student student = controller.getById(currentItemId, currentSelection);
+					student.setFirstName(firstNameField.getText());
+					student.setLastName(lastNameField.getText());
+					student.setBirthDate(birthDatePicker.getValue());
+					student.setEmail(emailField.getText());
+					controller.update(student);
+					System.out.println("Currentselection: " + currentSelection);
+					System.out.println("currentItemId: " + currentItemId);
+					System.out.println("Currentselection: " + courseListView.getSelectionModel().getSelectedItems());
+					
+					listItemIds = new ArrayList<>();
+					int edID = educationChoiceBox.getSelectionModel().getSelectedItem().getId();
+					if(edID>0)
+					listItemIds.add(edID);
+					controller.associate(currentSelection, currentItemId, listItemIds, EntityType.EDUCATION);
 
+					
+					mainApp.refreshTableView();
 					break;
 				}
 				
@@ -399,6 +439,13 @@ public class CRUDController implements SubControllerAPI {
 
 	public void setCurrentItemId(int id) {
 		this.currentItemId = id;
+	}
+	public void setCurrentSelection(EntityType type) {
+		this.currentSelection = type;
+	}
+
+	public void setEducationChoiceBox(ChoiceBox<ListItem> educationChoiceBox) {
+		this.educationChoiceBox = educationChoiceBox;
 	}
 
 	

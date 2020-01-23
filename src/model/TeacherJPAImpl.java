@@ -44,7 +44,9 @@ public class TeacherJPAImpl implements SchoolManagementDAO<Teacher> {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            em.merge(teacher);
+            teacher = em.merge(teacher);
+            
+            
 //            Teacher teacherUpdate = em.find(Teacher.class, teacher.getId());
 //            teacherUpdate.setFirstName(teacher.getFirstName());
 //            teacherUpdate.setLastName(teacher.getLastName());
@@ -70,11 +72,11 @@ public class TeacherJPAImpl implements SchoolManagementDAO<Teacher> {
         try {
             em.getTransaction().begin();
             Teacher newTeacher = em.find(Teacher.class, id);
-            System.out.println(newTeacher);
+//            System.out.println(newTeacher);
             em.getTransaction().commit();
             return newTeacher;
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("getById(): " + e);
             return null;
         } finally {
 			if (em != null)

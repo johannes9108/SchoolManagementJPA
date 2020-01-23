@@ -49,17 +49,11 @@ public class EducationJPAImpl implements SchoolManagementDAO<Education> {
 
 		try {
 			tx.begin();
-			Education educationUpdate = em.find(Education.class, education.getId());
-			educationUpdate.setName(education.getName());
-			educationUpdate.setFaculty(education.getFaculty());
-			educationUpdate.setFinalDate(education.getFinalDate());
-			educationUpdate.setStartDate(education.getStartDate());
-			educationUpdate.setCourses(education.getCourses());
-			educationUpdate.setStudents(education.getStudents());
+			education = em.merge(education);
 			tx.commit();
-			return educationUpdate.getId();
+			return education.getId();
 		} catch (Exception e) {
-			System.out.println("Couldn't Persist the object" + education);
+			System.out.println("Couldn't Persist the object: " + education);
 			return -1;
 		} finally {
 			if (em != null)

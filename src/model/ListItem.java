@@ -12,7 +12,7 @@ public class ListItem {
 	
 	@Override
 	public String toString() {
-		return content + " | " + id;
+		return content;
 	}
 
 

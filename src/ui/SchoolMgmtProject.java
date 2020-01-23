@@ -98,14 +98,15 @@ public class SchoolMgmtProject {
 //        c = controller.getById(1, EntityType.COURSE);
 //        System.out.println("EFTER ASSOCIATION:\n" + c);
         
-        Teacher t = controller.getById(1, EntityType.TEACHER);
-        System.out.println("INNAN:\n" + t);
-        List<Integer> listItemIds = new ArrayList<Integer>();
-        listItemIds.add(1);
-        listItemIds.add(4);
-        controller.associate(EntityType.TEACHER, 1, listItemIds, EntityType.COURSE);
-        t = controller.getById(1, EntityType.TEACHER);
-        System.out.println("EFTER ASSOCIATION:\n" + t);
+	//        Teacher t = controller.getById(1, EntityType.TEACHER);
+	//        System.out.println("INNAN:\n" + t);
+	//        List<Integer> listItemIds = new ArrayList<Integer>();
+	//        listItemIds.add(1);
+	//        listItemIds.add(4);
+	//        controller.associate(EntityType.TEACHER, 1, listItemIds, EntityType.COURSE);
+	//        t = controller.getById(1, EntityType.TEACHER);
+	//        System.out.println("EFTER ASSOCIATION:\n" + t);
+        
         
 //        Teacher t = controller.getById(1, EntityType.TEACHER);
 //        System.out.println("INNAN:\n" + t);
@@ -128,6 +129,13 @@ public class SchoolMgmtProject {
 //        
 //        controller.associate(EntityType.TEACHER, 1, courses);
 //        set.forEach(System.out::println);
+        
+        
+        Course c = controller.getById(1, EntityType.COURSE);
+      System.out.println("INNAN:\n" + c);
+        c.setName("TEST");
+        controller.update(c);
+      System.out.println("EFTER ASSOCIATION:\n" + c);
     }
 
     public static void setUpData() {

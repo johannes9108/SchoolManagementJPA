@@ -24,115 +24,109 @@ import javafx.beans.property.StringProperty;
 @Entity
 public class Student {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 
-    @Basic
-    private String firstName;
+	@Basic
+	private String firstName;
 
-    @Basic
-    private String lastName;
+	@Basic
+	private String lastName;
 
-    @Basic
-    private LocalDate birthDate;
+	@Basic
+	private LocalDate birthDate;
 
-    @Basic
-    private String email;
+	@Basic
+	private String email;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
-    private Education education;
-    
-    @Transient
-    private SimpleStringProperty educationProperty;
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+	private Education education;
 
-    public Student() {
-    	educationProperty = new SimpleStringProperty();
-    }
+	@Transient
+	private SimpleStringProperty educationProperty;
 
-    public Student(String firstName, String lastName, LocalDate birthDate, String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthDate = birthDate;
-        this.email = email;
-        
-        educationProperty = new SimpleStringProperty(); 
-    }
-    
-    
+	public Student() {
+		educationProperty = new SimpleStringProperty();
+	}
 
-    public int getId() {
-        return this.id;
-    }
+	public Student(String firstName, String lastName, LocalDate birthDate, String email) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.birthDate = birthDate;
+		this.email = email;
 
-   
+		educationProperty = new SimpleStringProperty();
+	}
+
+	public int getId() {
+		return this.id;
+	}
 
 	public void setId(int id) {
-        this.id = id;
-    }
+		this.id = id;
+	}
 
-    public String getFirstName() {
-        return this.firstName;
-    }
+	public String getFirstName() {
+		return this.firstName;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public String getLastName() {
-        return this.lastName;
-    }
+	public String getLastName() {
+		return this.lastName;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    public LocalDate getBirthDate() {
-        return this.birthDate;
-    }
+	public LocalDate getBirthDate() {
+		return this.birthDate;
+	}
 
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
+	public void setBirthDate(LocalDate birthDate) {
+		this.birthDate = birthDate;
+	}
 
-    public String getEmail() {
-        return this.email;
-    }
+	public String getEmail() {
+		return this.email;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public SimpleStringProperty educationProperty() {
-    	if(education!=null)
-    	educationProperty.set(education.getName());
-    	return educationProperty;
-    }
-    
-    @PreRemove
-    public void clearBindingsFromStudent() {
-    	education.getStudents().remove(this);
-    }
-    public Education getEducation() {
-    	System.out.println("Anropas getEdu");
+	public SimpleStringProperty educationProperty() {
+		if (education != null)
+			educationProperty.set(education.getName());
+		return educationProperty;
+	}
 
-        return this.education;
-    }
+	@PreRemove
+	public Education clearBindingsFromStudent() {
+		if (education != null)
+			education.getStudents().remove(this);
+		return education;
+	}
 
-    public void setEducation(Education education) {
-        this.education = education;
-        if(education!=null)
-        educationProperty.setValue(education.getName());
-    }
-    
+	public Education getEducation() {
+		return this.education;
+	}
 
-    
+	public void setEducation(Education education) {
+		this.education = education;
+		if (education != null)
+			educationProperty.setValue(education.getName());
+	}
 
-    @Override
-    public String toString() {
-        return "Student{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate + ", email=" + email + ", education=" +
-        		((education!=null)?education.getName():"") + '}';
-    }
-    
+	@Override
+	public String toString() {
+		return "Student{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate="
+				+ birthDate + ", email=" + email + ", education=" + ((education != null) ? education.getName() : "")
+				+ '}';
+	}
 
 }

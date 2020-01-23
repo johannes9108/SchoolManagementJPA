@@ -8,11 +8,13 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
 
 /**
  * @author rober
@@ -36,10 +38,10 @@ public class Course {
     @Basic
     private int points;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH},fetch = FetchType.EAGER)
     private List<Teacher> teachers;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH})
     private List<Education> educations;
 
     public Course(String name, String subject, String difficulty, int points) {
@@ -106,12 +108,12 @@ public class Course {
     }
 
     public void addTeacher(Teacher teacher) {
-        getTeachers().add(teacher);
+        teachers.add(teacher);
         teacher.getCourses().add(this);
     }
 
     public void removeTeacher(Teacher teacher) {
-        getTeachers().remove(teacher);
+        teachers.remove(teacher);
         teacher.getCourses().remove(this);
     }
 
@@ -136,6 +138,15 @@ public class Course {
         education.getCourses().remove(this);
     }
 
+    @PreUpdate
+    public void test() {
+    	
+    	System.out.println("Uppdatering i " + name);
+    	for (Teacher teacher : teachers) {
+			System.out.println(teacher);
+		}
+    	System.out.println("Klar med Uppdatering!");
+    }
     @PreRemove
     public void clearBindingsFromCourse() {
     	System.out.println("T size: " + teachers.size());
@@ -145,20 +156,20 @@ public class Course {
     	System.out.println();
     }
 
-	public void clearEducationBindingsFromCourse() {
+	public List<Education> clearEducationBindingsFromCourse() {
 		System.out.println("clearEducationBindingsFromCourse()");
 		for (Education education : educations) {
 			education.getCourses().remove(this);
 		}
-		getEducations().clear();
+		return educations;
 	}
 
-	public void clearTeacherBindingsFromCourse() {
+	public List<Teacher> clearTeacherBindingsFromCourse() {
 		System.out.println("clearTeacherBindingsFromCourse()");
 		for (Teacher teacher: teachers) {
     		teacher.getCourses().remove(this);
     	}
-		getTeachers().clear();
+		return teachers;
 	}
     
     

@@ -45,7 +45,7 @@ public class CourseJPAImpl implements SchoolManagementDAO<Course> {
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
-			em.merge(course);
+			course = em.merge(course);
 //			Course courseUpdate = em.find(Course.class, course.getId());
 //			courseUpdate.setName(course.getName());
 //			courseUpdate.setDifficulty(course.getDifficulty());

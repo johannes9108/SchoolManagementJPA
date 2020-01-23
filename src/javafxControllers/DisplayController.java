@@ -97,6 +97,7 @@ public class DisplayController implements SubControllerAPI {
 				insertCorrectDisplayView(currentType);
 				currentSelection = currentType;
 				populate(currentSelection, null);
+				System.out.println("CurrentSelection=="+currentType);
 			}
 		});
 
@@ -107,8 +108,8 @@ public class DisplayController implements SubControllerAPI {
 					mainApp.displayFullInfo(currentSelection, row.getItem());
 				}
 				if (event.getButton() == MouseButton.SECONDARY) {
-					System.out.println("Högerklicka");
-					System.out.println(row.getParent());
+//					System.out.println("Högerklicka");
+//					System.out.println(row.getParent());
 
 					createContextMenu(currentSelection, row,
 							row.getParent().getScene().getWindow().getX() + event.getSceneX() + 5,
@@ -128,7 +129,7 @@ public class DisplayController implements SubControllerAPI {
 		ObservableList<?> displayList = tw.getItems();
 		ArrayList tmp = null;
 
-		collection.forEach(System.out::println);
+//		collection.forEach(System.out::println);
 
 		System.out.println(filterMap);
 		if (filterMap != null && !filterMap.isEmpty()) {
@@ -199,6 +200,12 @@ public class DisplayController implements SubControllerAPI {
 					if (filterMap.containsKey("Name")) {
 						System.out.println("Name: " + filterMap.get("Name") + ":" + t.getName());
 						if (!(t.getName().toLowerCase().contains(filterMap.get("Name").toLowerCase()))) {
+							return false;
+						}
+					}
+					if (filterMap.containsKey("Subject")) {
+						System.out.println("Subject: " + filterMap.get("Subject") + ":" + t.getName());
+						if (!(t.getName().toLowerCase().contains(filterMap.get("Subject").toLowerCase()))) {
 							return false;
 						}
 					}
@@ -404,6 +411,10 @@ public class DisplayController implements SubControllerAPI {
 			tfCheck = (TextField) searchItems.get("Name");
 			if (!tfCheck.getText().isEmpty())
 				activeSearchItems.put("Name", tfCheck.getText());
+			
+			tfCheck = (TextField) searchItems.get("Subject");
+			if (!tfCheck.getText().isEmpty())
+				activeSearchItems.put("Subject", tfCheck.getText());
 
 			tfCheck = (TextField) searchItems.get("Difficulty");
 			if (!tfCheck.getText().isEmpty())
@@ -541,15 +552,15 @@ public class DisplayController implements SubControllerAPI {
 
 		cm.getItems().addAll(removeOption, updateOption);
 
-		MenuItem addCourse = new MenuItem("Add Course");
-		addCourse.setOnAction(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {
-				mainApp.displayFullInfo(currentSelection, item.getItem());
-				mainApp.displayAssociateView(currentSelection, item.getItem());
-			}
-		});
+//		MenuItem addCourse = new MenuItem("Add Course");
+//		addCourse.setOnAction(new EventHandler<ActionEvent>() {
+//			
+//			@Override
+//			public void handle(ActionEvent event) {
+//				mainApp.displayFullInfo(currentSelection, item.getItem());
+//				mainApp.displayAssociateView(currentSelection, item.getItem());
+//			}
+//		});
 //		MenuItem removeCourse = new MenuItem("Remove Course");
 //		MenuItem addTeacher = new MenuItem("Add Teacher");
 //		MenuItem removeTeacher = new MenuItem("Remove Teacher");
@@ -576,7 +587,7 @@ public class DisplayController implements SubControllerAPI {
 //			cm.getItems().addAll(setEducation);
 //			break;
 //		}
-		System.out.println(posX + ":" + item.getLayoutY());
+//		System.out.println(posX + ":" + item.getLayoutY());
 		cm.show(item.getParent().getScene().getWindow(), posX, posY);
 	}
 
