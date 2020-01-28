@@ -234,6 +234,9 @@ public class CRUDController implements SubControllerAPI {
 			courseListView.getSelectionModel().clearSelection();
 			break;
 		case COURSE:
+			if(pointsField.getText().isEmpty()) {
+				pointsField.setText(""+0);
+			}
 			id = controller.add(new Course(nameField.getText(), subjectField.getText(), difficultyField.getText(),
 					Integer.parseInt(pointsField.getText())));
 			if (id >= 0) {
@@ -362,6 +365,9 @@ public class CRUDController implements SubControllerAPI {
 					course.setName(nameField.getText());
 					course.setSubject(subjectField.getText());
 					course.setDifficulty(difficultyField.getText());
+					if(pointsField.getText().isEmpty()) {
+						pointsField.setText(""+0);
+					}
 					course.setPoints(Integer.parseInt(pointsField.getText()));
 					controller.update(course);
 					System.out.println("Currentselection: " + currentSelection);
