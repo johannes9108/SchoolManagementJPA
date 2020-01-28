@@ -171,7 +171,7 @@ public class SchoolManagementSystemJavaFX extends Application {
 		FXMLLoader loader;
 		VBox vbox;
 		loader = new FXMLLoader(getClass().getResource("/fxml/StatsTab.fxml"));
-		loader.setController(displayController);
+//		loader.setController(displayController);
 		
 		vbox = loader.load();
 		System.out.println(vbox);
@@ -201,8 +201,8 @@ public class SchoolManagementSystemJavaFX extends Application {
 		
 		tabGroup.get(2).setContent(vbox);
 		
-		displayController.setBiDirectional(this);
-		displayController.setMainController(controller);
+//		displayController.setBiDirectional(this);
+//		displayController.setMainController(controller);
 		
 	}
 

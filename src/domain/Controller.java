@@ -159,7 +159,9 @@ public class Controller implements ControllerAPI {
 
 	public void associate(EntityType type, int id, List<Integer> listItemIds, EntityType typeOfAssociation) {
 		switch (type) {
+		
 		case TEACHER:
+			
 			Teacher teacher = teacherJPAImpl.getById(id);
 			List<Course> coursesToBeMerged = teacher.clearBindingsFromTeacher();
 

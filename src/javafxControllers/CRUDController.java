@@ -47,7 +47,7 @@ public class CRUDController implements SubControllerAPI {
 	private TextField emailField;
 	@FXML
 	private DatePicker birthDatePicker;
-	
+
 	private ChoiceBox<ListItem> educationChoiceBox;
 
 	public void setFirstNameField(TextField firstNameField) {
@@ -102,7 +102,6 @@ public class CRUDController implements SubControllerAPI {
 		this.clearButton = clearButton;
 	}
 
-	
 	@FXML
 	private TextField nameField;
 	@FXML
@@ -123,7 +122,7 @@ public class CRUDController implements SubControllerAPI {
 	private ListView<ListItem> courseListView;
 	private ListView<ListItem> educationListView;
 	private ListView<ListItem> studentListView;
-	
+
 	public ListView<ListItem> getTeacherListView() {
 		return teacherListView;
 	}
@@ -158,7 +157,6 @@ public class CRUDController implements SubControllerAPI {
 
 	@FXML
 	private ListView<String> relationshipListView;
-	
 
 	@FXML
 	private Button addButton;
@@ -169,9 +167,9 @@ public class CRUDController implements SubControllerAPI {
 	private Button updateButton;
 
 	private int currentItemId;
-	
+
 	public void setMainController(Controller controller) {
-		
+
 		toggleBoxes = new ArrayList<>();
 		this.controller = controller;
 		entityList.getItems().addAll("Teacher", "Course", "Education", "Student");
@@ -190,12 +188,11 @@ public class CRUDController implements SubControllerAPI {
 			}
 		});
 
-		
 	}
 
 	private void insertCorrectAddView(EntityType type) {
 		mainApp.insertCorrectAddView(type);
-		
+
 //		pointsField.textProperty().addListener(new ChangeListener<String>() {
 //		    @Override
 //		    public void changed(ObservableValue<? extends String> observable, String oldValue, 
@@ -210,27 +207,25 @@ public class CRUDController implements SubControllerAPI {
 	public void setBiDirectional(SchoolManagementSystemJavaFX schoolManagementSystemJavaFX) {
 		mainApp = schoolManagementSystemJavaFX;
 	}
-	private List<Integer> convertItemsToIDs(ListView<ListItem> tmp){
+
+	private List<Integer> convertItemsToIDs(ListView<ListItem> tmp) {
 		List<Integer> result = new ArrayList<Integer>();
-		tmp.getSelectionModel().getSelectedItems()
-		.forEach(t->result.add(t.getId()));
+		tmp.getSelectionModel().getSelectedItems().forEach(t -> result.add(t.getId()));
 		return result;
-		
+
 	}
 
 	public void handleAdd() {
-		
-		
-		
+
 		int id = -1;
 
 		switch (currentSelection) {
 		case TEACHER:
 			id = controller.add(new Teacher(firstNameField.getText(), lastNameField.getText(),
 					birthDatePicker.getValue(), emailField.getText()));
-			if(id>=0) {
+			if (id >= 0) {
 				List<Integer> ids = convertItemsToIDs(courseListView);
-				controller.associate(currentSelection,id,ids,EntityType.COURSE);
+				controller.associate(currentSelection, id, ids, EntityType.COURSE);
 			}
 			firstNameField.clear();
 			lastNameField.clear();
@@ -241,13 +236,13 @@ public class CRUDController implements SubControllerAPI {
 		case COURSE:
 			id = controller.add(new Course(nameField.getText(), subjectField.getText(), difficultyField.getText(),
 					Integer.parseInt(pointsField.getText())));
-			if(id>=0) {
+			if (id >= 0) {
 				List<Integer> associationIDs = convertItemsToIDs(teacherListView);
-				controller.associate(currentSelection,id,associationIDs,EntityType.TEACHER);
+				controller.associate(currentSelection, id, associationIDs, EntityType.TEACHER);
 				associationIDs = convertItemsToIDs(educationListView);
-				controller.associate(currentSelection,id,associationIDs,EntityType.EDUCATION);
+				controller.associate(currentSelection, id, associationIDs, EntityType.EDUCATION);
 			}
-			
+
 			nameField.clear();
 			subjectField.clear();
 			difficultyField.clear();
@@ -259,28 +254,28 @@ public class CRUDController implements SubControllerAPI {
 		case EDUCATION:
 			id = controller.add(new Education(nameField.getText(), facultyField.getText(), startDate.getValue(),
 					finalDate.getValue()));
-			
-			if(id>=0) {
+
+			if (id >= 0) {
 				List<Integer> associationIDs = convertItemsToIDs(courseListView);
-				controller.associate(currentSelection,id,associationIDs,EntityType.COURSE);
+				controller.associate(currentSelection, id, associationIDs, EntityType.COURSE);
 				associationIDs = convertItemsToIDs(studentListView);
-				controller.associate(currentSelection,id,associationIDs,EntityType.STUDENT);
+				controller.associate(currentSelection, id, associationIDs, EntityType.STUDENT);
 			}
 			nameField.clear();
 			facultyField.clear();
 			startDate.setValue(null);
 			finalDate.setValue(null);
-			
+
 			courseListView.getSelectionModel().clearSelection();
 			studentListView.getSelectionModel().clearSelection();
-			
+
 			break;
 		case STUDENT:
 			id = controller.add(new Student(firstNameField.getText(), lastNameField.getText(),
 					birthDatePicker.getValue(), emailField.getText()));
-			if(id>=0) {
+			if (id >= 0) {
 				List<Integer> indicies = convertItemsToIDs(educationListView);
-				controller.associate(currentSelection,id,indicies,EntityType.EDUCATION);
+				controller.associate(currentSelection, id, indicies, EntityType.EDUCATION);
 			}
 			firstNameField.clear();
 			lastNameField.clear();
@@ -289,11 +284,10 @@ public class CRUDController implements SubControllerAPI {
 			educationListView.getSelectionModel().clearSelection();
 			break;
 		}
-		if (id>=0) {
+		if (id >= 0) {
 			controller.refreshLocalData(currentSelection);
 			mainApp.report("Success when adding!");
-			
-			
+
 		} else {
 			mainApp.report("FAILURE when adding!!!");
 		}
@@ -331,12 +325,10 @@ public class CRUDController implements SubControllerAPI {
 		}
 	}
 
-
-
 	public void setUpdateButton(Button updateButton) {
 		this.updateButton = updateButton;
 		updateButton.setOnAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
 				switch (currentSelection) {
@@ -360,14 +352,14 @@ public class CRUDController implements SubControllerAPI {
 					ArrayList<Integer> listItemIds = (ArrayList<Integer>) convertItemsToIDs(courseListView);
 					System.out.println("Balle balle " + listItemIds);
 					controller.associate(currentSelection, currentItemId, listItemIds, EntityType.COURSE);
-					
+
 					mainApp.refreshTableView();
 					break;
 
 				case COURSE:
 					System.out.println("ID: " + currentItemId);
 					Course course = controller.getById(currentItemId, currentSelection);
-					
+
 					course.setName(nameField.getText());
 					course.setSubject(subjectField.getText());
 					course.setDifficulty(difficultyField.getText());
@@ -388,7 +380,7 @@ public class CRUDController implements SubControllerAPI {
 
 					System.out.println("ID: " + currentItemId);
 					Education education = controller.getById(currentItemId, currentSelection);
-					
+
 					education.setName(nameField.getText());
 					education.setFaculty(facultyField.getText());
 					education.setStartDate(startDate.getValue());
@@ -403,7 +395,7 @@ public class CRUDController implements SubControllerAPI {
 					listItemIds = (ArrayList<Integer>) convertItemsToIDs(studentListView);
 					controller.associate(currentSelection, currentItemId, listItemIds, EntityType.STUDENT);
 					mainApp.refreshTableView();
-					
+
 					break;
 
 				case STUDENT:
@@ -417,29 +409,28 @@ public class CRUDController implements SubControllerAPI {
 					System.out.println("Currentselection: " + currentSelection);
 					System.out.println("currentItemId: " + currentItemId);
 					System.out.println("Currentselection: " + courseListView.getSelectionModel().getSelectedItems());
-					
+
 					listItemIds = new ArrayList<>();
 					int edID = educationChoiceBox.getSelectionModel().getSelectedItem().getId();
-					if(edID>0)
-					listItemIds.add(edID);
+					if (edID > 0)
+						listItemIds.add(edID);
 					controller.associate(currentSelection, currentItemId, listItemIds, EntityType.EDUCATION);
 
-					
 					mainApp.refreshTableView();
 					break;
 				}
-				
+
 				mainApp.close();
 
-
 			}
-			
+
 		});
 	}
 
 	public void setCurrentItemId(int id) {
 		this.currentItemId = id;
 	}
+
 	public void setCurrentSelection(EntityType type) {
 		this.currentSelection = type;
 	}
@@ -447,8 +438,5 @@ public class CRUDController implements SubControllerAPI {
 	public void setEducationChoiceBox(ChoiceBox<ListItem> educationChoiceBox) {
 		this.educationChoiceBox = educationChoiceBox;
 	}
-
-	
-	
 
 }
