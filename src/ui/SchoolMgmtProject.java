@@ -32,8 +32,63 @@ public class SchoolMgmtProject {
         setUpData();
         
         menu();
+        
+//        Controller controller = new Controller();
+////        
+//////        Education ed1 = controller.getById(1, EntityType.EDUCATION);
+////        Education ed2 = controller.getById(2, EntityType.EDUCATION);
+////        System.out.println(ed2);
+//////        
+//        Course course1before = controller.getById(1, EntityType.COURSE);
+//        System.out.println(course1before);
+////        
+////        ed2.removeCourse(course1before);
+//////        
+////////        Teacher t1 = controller.getById(1, EntityType.TEACHER);
+//        Teacher t2 = controller.getById(2, EntityType.TEACHER);
+////////        Course course2 = controller.getById(2, EntityType.COURSE);
+////////        System.out.println("\n"+t1);
+////////        System.out.println(course2);
+//        System.out.println(t2);
+////////        System.out.println("////////////////");
+//////        
+////////        course2.addTeacher(t1);
+////////        course1before.removeTeacher(t1);
+//        t2.removeCourse(course1before);
+//////
+//////////        course2.removeTeacher(t2);
+////        controller.updateCourse(course1before);
+////        controller.updateEducation(ed2);
+//////        
+//////        
+////////        controller.updateCourse(course2);
+//////        controller.updateTeacher(t1);
+//        controller.updateTeacher(t2);
+//        controller.updateCourse(course1before);
+////        
+////////        System.out.println(course2);
+////////        System.out.println(t1);
+////System.out.println(course1before);
+//////        
+//////        
+////////        Teacher t1_newFetch = controller.getById(1, EntityType.TEACHER);
+//        Course course1_newFetch = controller.getById(1, EntityType.COURSE);
+////        System.out.println("//////////kalle////");
+//////        System.out.println(t1_newFetch);
+//        System.out.println(course1_newFetch);
+//////
+////        Education ed2_newFetch = controller.getById(2, EntityType.EDUCATION);
+////        System.out.println("//////////////");
+////        System.out.println(ed2_newFetch);
+//////
+//        Teacher t2_newFetch = controller.getById(2, EntityType.TEACHER);
+//////        Course course2_newFetch = controller.getById(2, EntityType.COURSE);
+////        System.out.println("//////////////");
+//        System.out.println(t2_newFetch);
+//////        System.out.println(course2_newFetch);
 
-//////        Controller controller = new Controller();
+        
+        
 //////////////        Education edu1 = controller.getById(1, EntityType.EDUCATION);
 //////        Education edu2 = controller.getById(2, EntityType.EDUCATION);
 ////////////
@@ -208,6 +263,11 @@ public class SchoolMgmtProject {
 
         em.persist(e1);
         em.persist(e2);
+        
+//        c1.addTeacher(t1);
+//        c1.addTeacher(t2);
+//        
+//        c2.addTeacher(t1);
 
         t1.addCourse(c1);
         t1.addCourse(c2);

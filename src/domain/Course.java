@@ -6,6 +6,7 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -34,10 +35,10 @@ public class Course {
     @Basic
     private int points;
 
-    @ManyToMany
+    @ManyToMany (cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     private List<Teacher> teachers;
 
-    @ManyToMany(mappedBy = "courses")
+    @ManyToMany(mappedBy = "courses", cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}) 
     private List<Education> educations;
 
     public Course(String name, String subject, String difficulty, int points) {
@@ -130,15 +131,46 @@ public class Course {
 
     public void removeEducation(Education education) {
         getEducations().remove(education);
+        education.getCourses().remove(this);
     }
+    
+   
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Course{" + "id=" + id + ", name=" + name + ", subject=" + subject + ", difficulty=" + difficulty + ", points=" + points + ", teachers=");
         teachers.forEach(t->sb.append(t.getFirstName()+" " + t.getLastName() + ", "));
+        educations.forEach(e->sb.append("Education::"+e.getName()));
         sb.delete(sb.length()-2, sb.length());
         sb.append('}');
         return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + this.id;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Course other = (Course) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 
 }

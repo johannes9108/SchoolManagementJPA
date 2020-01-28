@@ -11,7 +11,7 @@ import javax.persistence.Query;
 
 import domain.Course;
 
-public class CourseJPAImpl implements SchoolManagementDAO<Course> {
+public class CourseJPAImpl implements SchoolManagementDAO<Course>, CourseDAO {
 
 	private EntityManagerFactory emf;
 
@@ -40,20 +40,21 @@ public class CourseJPAImpl implements SchoolManagementDAO<Course> {
 	}
 
 	@Override
-	public int update(Course course) {
+	public int updateCourse(Course course) {
 		em = emf.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
-			Course courseUpdate = em.find(Course.class, course.getId());
-			courseUpdate.setName(course.getName());
-			courseUpdate.setDifficulty(course.getDifficulty());
-			courseUpdate.setSubject(course.getSubject());
-			courseUpdate.setEducations(course.getEducations());
-			courseUpdate.setPoints(course.getPoints());
-			courseUpdate.setTeachers(course.getTeachers());
+//			Course courseUpdate = em.find(Course.class, course.getId());
+//			courseUpdate.setName(course.getName());
+//			courseUpdate.setDifficulty(course.getDifficulty());
+//			courseUpdate.setSubject(course.getSubject());
+//			courseUpdate.setEducations(course.getEducations());
+//			courseUpdate.setPoints(course.getPoints());
+//			courseUpdate.setTeachers(course.getTeachers());
+                        em.merge(course);
 			tx.commit();
-			return courseUpdate.getId();
+			return course.getId();
 		} catch (PersistenceException exception) {
 			System.out.println("Couldn't update the object" + course);
 			return -1;

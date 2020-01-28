@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -35,11 +36,11 @@ public class Teacher {
     @Basic
     private String email;
 
-    @ManyToMany(mappedBy = "teachers")
+    @ManyToMany(mappedBy = "teachers", cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     private List<Course> courses;
 
     public Teacher() {
-        courses = new ArrayList<>();
+        //courses = new ArrayList<>(); 
     }
 
     public Teacher(String firstName, String lastName, LocalDate birthDate, String email) {
@@ -47,7 +48,7 @@ public class Teacher {
         this.lastName = lastName;
         this.birthDate = birthDate;
         this.email = email;
-        courses = new ArrayList<>();
+        //courses = new ArrayList<>();
     }
 
     
@@ -123,6 +124,33 @@ public class Teacher {
         sb.append('}');
         return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + this.id;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Teacher other = (Teacher) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 
     
 

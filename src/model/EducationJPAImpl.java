@@ -12,7 +12,7 @@ import domain.Education;
 import domain.Student;
 import java.util.HashSet;
 
-public class EducationJPAImpl implements SchoolManagementDAO<Education> {
+public class EducationJPAImpl implements SchoolManagementDAO<Education>, EducationDAO {
 
 	private EntityManagerFactory emf;
 
@@ -43,7 +43,7 @@ public class EducationJPAImpl implements SchoolManagementDAO<Education> {
 	}
 
 	@Override
-	public int update(Education education) {
+	public int updateEducation(Education education) {
 		em = emf.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 
