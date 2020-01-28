@@ -106,16 +106,32 @@ public class Controller implements ControllerAPI {
 	public int removeById(int id, EntityType type) {
 		switch (type) {
 		case TEACHER:
-			return teacherJPAImpl.removeById(id);
+			int teacherToRemove = teacherJPAImpl.removeById(id);
+			refreshLocalData(type);
+			refreshLocalData(EntityType.COURSE);
+			return teacherToRemove;
+			
 		case COURSE:
-			return courseJPAImpl.removeById(id);
+			int courseToRemove = courseJPAImpl.removeById(id);
+			refreshLocalData(type);
+			refreshLocalData(EntityType.TEACHER);
+			refreshLocalData(EntityType.EDUCATION);
+			return courseToRemove;
 		case EDUCATION:
-			return educationJPAImpl.removeById(id);
+			int educationToRemove = educationJPAImpl.removeById(id);
+			refreshLocalData(type);
+			refreshLocalData(EntityType.COURSE);
+			refreshLocalData(EntityType.STUDENT);
+			return educationToRemove;
 		case STUDENT:
-			return studentJPAImpl.removeById(id);
+			int studentToRemove = studentJPAImpl.removeById(id);
+			refreshLocalData(type);
+			refreshLocalData(EntityType.EDUCATION);
+			return studentToRemove;
 		default:
 			return 0;
 		}
+		
 	}
 
 	@Override
