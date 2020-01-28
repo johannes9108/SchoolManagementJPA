@@ -52,32 +52,6 @@ public class DisplayController implements SubControllerAPI {
 
 	ObservableMap<String, Node> searchItems;
 
-//	@FXML
-//	private TextField searchID;
-//	
-//	private TextField searchFirstName;
-//	@FXML
-//	private TextField searchEmail;
-//	@FXML
-//	private DatePicker searchBirthDateFrom;
-//	@FXML
-//	private DatePicker searchBirthDateTo;
-//	@FXML
-//	private TextField searchName;
-//	@FXML
-//	private TextField searchDifficulty;
-//	@FXML
-//	private TextField searchFaculty;
-//	@FXML
-//	private TextField searchPoints;
-//	@FXML
-//	private DatePicker searchStartDateFrom;
-//	@FXML
-//	private DatePicker searchStartDateTo;
-//	@FXML
-//	private DatePicker searchFinalDateFrom;
-//	@FXML
-//	private DatePicker searchFinalDateTo;
 
 	private SchoolManagementSystemJavaFX mainApp;
 
@@ -108,9 +82,6 @@ public class DisplayController implements SubControllerAPI {
 					mainApp.displayFullInfo(currentSelection, row.getItem());
 				}
 				if (event.getButton() == MouseButton.SECONDARY) {
-//					System.out.println("Högerklicka");
-//					System.out.println(row.getParent());
-
 					createContextMenu(currentSelection, row,
 							row.getParent().getScene().getWindow().getX() + event.getSceneX() + 5,
 							row.getParent().getScene().getWindow().getY() + event.getSceneY() + 55);
@@ -129,7 +100,6 @@ public class DisplayController implements SubControllerAPI {
 		ObservableList<?> displayList = tw.getItems();
 		ArrayList tmp = null;
 
-//		collection.forEach(System.out::println);
 
 		System.out.println(filterMap);
 		if (filterMap != null && !filterMap.isEmpty()) {
@@ -138,32 +108,32 @@ public class DisplayController implements SubControllerAPI {
 			case TEACHER:
 				System.out.println("Inne");
 				Stream<Teacher> teachers = (Stream<Teacher>) collection.stream();
-//					tmp.addAll(teachers.collect(Collectors.toList()));
 				tmp = (ArrayList) teachers.filter(t -> {
+					System.out.println("Checking teacher " + t.getFirstName());
 
 					if (filterMap.containsKey("ID")) {
-						System.out.println("ID");
+//						System.out.println("ID");
 						if (filterMap.get("ID").compareTo(t.getId() + "") != 0) {
 							return false;
 						}
 					}
 					if (filterMap.containsKey("FirstName")) {
-						System.out.println("FirstName: " + filterMap.get("FirstName") + ":" + t.getFirstName());
 						if (!(t.getFirstName().toLowerCase().contains(filterMap.get("FirstName").toLowerCase()))) {
 							return false;
 						}
+						System.out.println("FirstName: " + filterMap.get("FirstName") + ":" + t.getFirstName());
 					}
 					if (filterMap.containsKey("LastName")) {
-						System.out.println("LastName");
 						if (!(t.getLastName().toLowerCase().contains(filterMap.get("LastName").toLowerCase()))) {
 							return false;
 						}
+						System.out.println("LastName: " + filterMap.get("LastName") + ":" + t.getLastName());
 					}
 					if (filterMap.containsKey("Email")) {
-						System.out.println("Email");
 						if (!(t.getEmail().contains(filterMap.get("Email").toLowerCase()))) {
 							return false;
 						}
+						System.out.println("Email: " + filterMap.get("Email") + ":" + t.getEmail());
 					}
 					LocalDate max = LocalDate.MAX, min = LocalDate.MIN;
 
@@ -188,7 +158,6 @@ public class DisplayController implements SubControllerAPI {
 			case COURSE:
 				System.out.println("Inne");
 				Stream<Course> courses = (Stream<Course>) collection.stream();
-//					tmp.addAll(teachers.collect(Collectors.toList()));
 				tmp = (ArrayList) courses.filter(t -> {
 
 					if (filterMap.containsKey("ID")) {
@@ -198,22 +167,22 @@ public class DisplayController implements SubControllerAPI {
 						}
 					}
 					if (filterMap.containsKey("Name")) {
-						System.out.println("Name: " + filterMap.get("Name") + ":" + t.getName());
 						if (!(t.getName().toLowerCase().contains(filterMap.get("Name").toLowerCase()))) {
 							return false;
 						}
+						System.out.println("Name: " + filterMap.get("Name") + ":" + t.getName());
 					}
 					if (filterMap.containsKey("Subject")) {
-						System.out.println("Subject: " + filterMap.get("Subject") + ":" + t.getName());
 						if (!(t.getName().toLowerCase().contains(filterMap.get("Subject").toLowerCase()))) {
 							return false;
 						}
+						System.out.println("Subject: " + filterMap.get("Subject") + ":" + t.getName());
 					}
 					if (filterMap.containsKey("Difficulty")) {
-						System.out.println("Difficulty");
 						if (!(t.getDifficulty().toLowerCase().contains(filterMap.get("Difficulty").toLowerCase()))) {
 							return false;
 						}
+						System.out.println("Difficulty: " + t.getDifficulty());
 					}
 					int max = Integer.MAX_VALUE, min = Integer.MIN_VALUE;
 
@@ -238,7 +207,6 @@ public class DisplayController implements SubControllerAPI {
 			case EDUCATION:
 				System.out.println("Inne");
 				Stream<Education> educations = (Stream<Education>) collection.stream();
-//					tmp.addAll(teachers.collect(Collectors.toList()));
 				tmp = (ArrayList) educations.filter(t -> {
 
 					if (filterMap.containsKey("ID")) {
@@ -248,16 +216,16 @@ public class DisplayController implements SubControllerAPI {
 						}
 					}
 					if (filterMap.containsKey("Name")) {
-						System.out.println("Name: " + filterMap.get("Name") + ":" + t.getName());
 						if (!(t.getName().toLowerCase().contains(filterMap.get("Name").toLowerCase()))) {
 							return false;
 						}
+						System.out.println("Name: " + filterMap.get("Name") + ":" + t.getName());
 					}
 					if (filterMap.containsKey("Faculty")) {
-						System.out.println("Faculty");
 						if (!(t.getFaculty().toLowerCase().contains(filterMap.get("Faculty").toLowerCase()))) {
 							return false;
 						}
+						System.out.println("Faculty: " + t.getFaculty());
 					}
 
 					LocalDate max = LocalDate.MAX, min = LocalDate.MIN;
@@ -300,7 +268,6 @@ public class DisplayController implements SubControllerAPI {
 			case STUDENT:
 				System.out.println("Inne");
 				Stream<Student> students = (Stream<Student>) collection.stream();
-//					tmp.addAll(teachers.collect(Collectors.toList()));
 				tmp = (ArrayList) students.filter(t -> {
 
 					if (filterMap.containsKey("ID")) {
@@ -310,22 +277,22 @@ public class DisplayController implements SubControllerAPI {
 						}
 					}
 					if (filterMap.containsKey("FirstName")) {
-						System.out.println("FirstName: " + filterMap.get("FirstName") + ":" + t.getFirstName());
 						if (!(t.getFirstName().toLowerCase().contains(filterMap.get("FirstName").toLowerCase()))) {
 							return false;
 						}
+						System.out.println("FirstName: " + filterMap.get("FirstName") + ":" + t.getFirstName());
 					}
 					if (filterMap.containsKey("LastName")) {
-						System.out.println("LastName");
 						if (!(t.getLastName().toLowerCase().contains(filterMap.get("LastName").toLowerCase()))) {
 							return false;
 						}
+						System.out.println("LastName: " + t.getLastName());
 					}
 					if (filterMap.containsKey("Email")) {
-						System.out.println("Email");
 						if (!(t.getEmail().contains(filterMap.get("Email").toLowerCase()))) {
 							return false;
 						}
+						System.out.println("Email: " + t.getEmail());
 					}
 					LocalDate max = LocalDate.MAX, min = LocalDate.MIN;
 
@@ -356,8 +323,6 @@ public class DisplayController implements SubControllerAPI {
 			tmp = new ArrayList<>(collection);
 		}
 		tw.getItems().addAll(tmp);
-//		List<?> set = controller.getAll(currentSelection);
-//		set.forEach(System.out::println);
 	}
 
 	private void insertCorrectDisplayView(EntityType type) {
@@ -552,42 +517,6 @@ public class DisplayController implements SubControllerAPI {
 
 		cm.getItems().addAll(removeOption, updateOption);
 
-//		MenuItem addCourse = new MenuItem("Add Course");
-//		addCourse.setOnAction(new EventHandler<ActionEvent>() {
-//			
-//			@Override
-//			public void handle(ActionEvent event) {
-//				mainApp.displayFullInfo(currentSelection, item.getItem());
-//				mainApp.displayAssociateView(currentSelection, item.getItem());
-//			}
-//		});
-//		MenuItem removeCourse = new MenuItem("Remove Course");
-//		MenuItem addTeacher = new MenuItem("Add Teacher");
-//		MenuItem removeTeacher = new MenuItem("Remove Teacher");
-//		MenuItem addStudent = new MenuItem("Add Student");
-//		MenuItem removeStudent = new MenuItem("Remove Student");
-//		MenuItem addEducation = new MenuItem("Add Education");
-//		MenuItem removeEducation = new MenuItem("Remove Education");
-//		
-//		
-//		MenuItem setEducation = new MenuItem("Set Education");
-//		switch (currentSelection) {
-//		case TEACHER:
-//			cm.getItems().addAll(addCourse, removeCourse);
-//			break;
-//
-//		case COURSE:
-//			cm.getItems().addAll(addTeacher, removeTeacher,addEducation,removeEducation);
-//			break;
-//
-//		case EDUCATION:
-//			cm.getItems().addAll(addCourse, removeCourse, addStudent, removeStudent);
-//			break;
-//		case STUDENT:
-//			cm.getItems().addAll(setEducation);
-//			break;
-//		}
-//		System.out.println(posX + ":" + item.getLayoutY());
 		cm.show(item.getParent().getScene().getWindow(), posX, posY);
 	}
 

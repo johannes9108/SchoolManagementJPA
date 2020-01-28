@@ -129,7 +129,7 @@ public class Teacher {
     }
     
     @PreRemove
-    public List<Course> clearBindingsFromTeacher() {
+    public void clearBindingsFromTeacher() {
     	System.out.println("C size: " + courses.size());
     	
     	for(Course course: courses) {
@@ -137,7 +137,7 @@ public class Teacher {
     		System.out.println(course.getTeachers().remove(this));
     	}
     	
-    	return courses;
+    	courses.clear();
 
     }
     

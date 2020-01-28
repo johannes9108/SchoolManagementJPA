@@ -285,7 +285,6 @@ public class CRUDController implements SubControllerAPI {
 			break;
 		}
 		if (id >= 0) {
-			controller.refreshLocalData(currentSelection);
 			mainApp.report("Success when adding!");
 
 		} else {

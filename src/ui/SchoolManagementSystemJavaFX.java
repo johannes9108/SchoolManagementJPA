@@ -453,7 +453,6 @@ public class SchoolManagementSystemJavaFX extends Application {
 		DatePicker searchBirthDateTo = new DatePicker();
 		searchBirthDateTo.setPromptText("BirthDate To");
 		searchBirthDateTo.setPrefWidth(150);
-		searchBirthDateTo.setValue(toDefault);
 
 		TextField searchName = new TextField();
 		searchName.setPromptText("Name");
@@ -482,14 +481,12 @@ public class SchoolManagementSystemJavaFX extends Application {
 		DatePicker searchStartDateTo = new DatePicker();
 		searchStartDateTo.setPromptText("StartDate To");
 		searchStartDateTo.setPrefWidth(150);
-		searchStartDateTo.setValue(toDefault);
 		DatePicker searchFinalDateFrom = new DatePicker();
 		searchFinalDateFrom.setPromptText("FinalDate From");
 		searchFinalDateFrom.setPrefWidth(150);
 		DatePicker searchFinalDateTo = new DatePicker();
 		searchFinalDateTo.setPromptText("FinalDate To");
 		searchFinalDateTo.setPrefWidth(150);
-		searchFinalDateTo.setValue(toDefault);
 
 		TextField education = new TextField();
 		education.setPromptText("Education");
@@ -506,8 +503,6 @@ public class SchoolManagementSystemJavaFX extends Application {
 		TableColumn<Teacher, String> teacherEmail = new TableColumn<>("Email");
 		teacherEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
 
-		// COURSES missing from teacher
-
 		TableColumn<Course, Integer> courseId = new TableColumn<>("ID");
 		courseId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		TableColumn<Course, String> courseName = new TableColumn<>("Name");
@@ -519,7 +514,6 @@ public class SchoolManagementSystemJavaFX extends Application {
 
 		TableColumn<Course, Integer> coursePoints = new TableColumn<>("Points");
 		coursePoints.setCellValueFactory(new PropertyValueFactory<>("points"));
-		// TEACHERS/EDUCATIONS missing from Course
 
 		TableColumn<Education, Integer> educationId = new TableColumn<>("ID");
 		educationId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -531,7 +525,6 @@ public class SchoolManagementSystemJavaFX extends Application {
 		educationStartDate.setCellValueFactory(new PropertyValueFactory<>("startDate"));
 		TableColumn<Education, LocalDate> educationFinalDate = new TableColumn<>("FinalDate");
 		educationFinalDate.setCellValueFactory(new PropertyValueFactory<>("finalDate"));
-		// STUDENTS/COURSE missing from Education
 
 		TableColumn<Student, Integer> studentId = new TableColumn<>("ID");
 		studentId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -545,7 +538,6 @@ public class SchoolManagementSystemJavaFX extends Application {
 		studentEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
 		TableColumn<Student, String> studentEducation = new TableColumn<>("Education");
 		studentEducation.setCellValueFactory(new PropertyValueFactory<>("education"));
-		// Missing Education
 
 		switch (type) {
 		case TEACHER: // Teacher

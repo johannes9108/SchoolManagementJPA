@@ -10,6 +10,8 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import domain.Course;
+import domain.Education;
+import domain.Teacher;
 
 public class CourseJPAImpl implements SchoolManagementDAO<Course> {
 
@@ -46,13 +48,7 @@ public class CourseJPAImpl implements SchoolManagementDAO<Course> {
 		try {
 			tx.begin();
 			course = em.merge(course);
-//			Course courseUpdate = em.find(Course.class, course.getId());
-//			courseUpdate.setName(course.getName());
-//			courseUpdate.setDifficulty(course.getDifficulty());
-//			courseUpdate.setSubject(course.getSubject());
-//			courseUpdate.setEducations(course.getEducations());
-//			courseUpdate.setPoints(course.getPoints());
-//			courseUpdate.setTeachers(course.getTeachers());
+
 			tx.commit();
 			return course.getId();
 		} catch (PersistenceException exception) {
@@ -119,6 +115,41 @@ public class CourseJPAImpl implements SchoolManagementDAO<Course> {
 			if (em != null)
 				em.close();
 		}
+	}
+
+	public void changeTeachersForCourse(int id, List<Integer> listItemIds) {
+		em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Course course = em.find(Course.class, id);
+            course.clearTeacherBindingsFromCourse();
+            listItemIds.forEach(i->course.addTeacher(em.find(Teacher.class, i)));
+            tx.commit();
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+			if (em != null)
+				em.close();
+		}
+	}
+
+	public void changeEducationsForCourse(int id, List<Integer> listItemIds) {
+		em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Course course = em.find(Course.class, id);
+            course.clearEducationBindingsFromCourse();
+            listItemIds.forEach(i->course.addEducation(em.find(Education.class, i)));
+            tx.commit();
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+			if (em != null)
+				em.close();
+		}
+		
 	}
 
 }

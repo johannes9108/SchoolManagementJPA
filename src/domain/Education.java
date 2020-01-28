@@ -122,20 +122,20 @@ public class Education {
     	clearCourseBindingsFromEducation();
     }
 
-	public List<Course> clearCourseBindingsFromEducation() {
+	public void clearCourseBindingsFromEducation() {
 		System.out.println("clearCourseBindingsFromEducation()");
 		for(Course course: courses) {
     		course.getEducations().remove(this);
     	}
-		return courses;
+		courses.clear();
 	}
 
-	public List<Student> clearStudentBindingsFromEducation() {
+	public void clearStudentBindingsFromEducation() {
 		System.out.println("clearStudentBindingsFromEducation()");
 		for (Student student : students) {
 			student.setEducation(null);
 		}
-		return students;
+		students.clear();
 	}
     public void removeStudent(Student student) {
         students.remove(student);

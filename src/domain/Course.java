@@ -156,22 +156,21 @@ public class Course {
     	System.out.println();
     }
 
-	public List<Education> clearEducationBindingsFromCourse() {
+	public void clearEducationBindingsFromCourse() {
 		System.out.println("clearEducationBindingsFromCourse()");
 		for (Education education : educations) {
 			education.getCourses().remove(this);
 		}
-		return educations;
+		educations.clear();
 	}
 
-	public List<Teacher> clearTeacherBindingsFromCourse() {
+	public void clearTeacherBindingsFromCourse() {
 		System.out.println("clearTeacherBindingsFromCourse()");
 		for (Teacher teacher: teachers) {
     		teacher.getCourses().remove(this);
     	}
-		return teachers;
+		teachers.clear();
 	}
-    
     
     @Override
     public String toString() {

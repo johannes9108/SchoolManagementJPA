@@ -8,6 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
+import domain.Education;
 import domain.Student;
 
 public class StudentJPAImpl implements SchoolManagementDAO<Student> {
@@ -115,5 +116,27 @@ private EntityManagerFactory emf;
 			if (em != null)
 				em.close();
 		}
+	}
+
+	public void changeEducationForStudent(int id, List<Integer> listItemIds) {
+		em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Student student = em.find(Student.class, id);
+            student.clearBindingsFromStudent();
+            if(listItemIds.size()>0) {
+            	student.addEducation( em.find(Education.class, listItemIds.get(0)));
+            }
+            else
+            	student.setEducation(null);
+            
+            tx.commit();
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+			if (em != null)
+				em.close();
+		}			
 	}
 }

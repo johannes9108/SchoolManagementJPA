@@ -106,10 +106,10 @@ public class Student {
 	}
 
 	@PreRemove
-	public Education clearBindingsFromStudent() {
+	public void clearBindingsFromStudent() {
 		if (education != null)
 			education.getStudents().remove(this);
-		return education;
+		setEducation(null);
 	}
 
 	public Education getEducation() {
@@ -118,8 +118,18 @@ public class Student {
 
 	public void setEducation(Education education) {
 		this.education = education;
-		if (education != null)
+		if (education != null) {
 			educationProperty.setValue(education.getName());
+		}
+		else
+			educationProperty.setValue("");
+	}
+	
+	public void addEducation(Education education) {
+		if(education!=null) {
+			education.getStudents().add(this);
+			setEducation(education);
+		}
 	}
 
 	@Override

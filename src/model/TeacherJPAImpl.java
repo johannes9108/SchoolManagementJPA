@@ -9,6 +9,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
+import domain.Course;
 import domain.Teacher;
  
 public class TeacherJPAImpl implements SchoolManagementDAO<Teacher> {
@@ -123,5 +124,22 @@ public class TeacherJPAImpl implements SchoolManagementDAO<Teacher> {
 		}
  
     }
+
+	public void changeCoursesForTeacher(int id, List<Integer> listItemIds) {
+		 	em = emf.createEntityManager();
+	        EntityTransaction tx = em.getTransaction();
+	        try {
+	            tx.begin();
+	            Teacher teacher = em.find(Teacher.class, id);
+	            teacher.clearBindingsFromTeacher();
+	            listItemIds.forEach(i->teacher.addCourse(em.find(Course.class, i)));
+	            tx.commit();
+	        } catch (Exception e) {
+	            System.out.println(e);
+	        } finally {
+				if (em != null)
+					em.close();
+			}
+	}
  
 }

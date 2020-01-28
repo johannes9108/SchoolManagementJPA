@@ -100,18 +100,6 @@ public class Controller implements ControllerAPI {
 		default:
 			return null;
 		}
-//		switch (entityChoice) {
-//		case 1:
-//			return (List<T>) teacherJPAImpl.getAll();
-//		case 2:
-//			return (List<T>) courseJPAImpl.getAll();
-//		case 3:
-//			return (List<T>) educationJPAImpl.getAll();
-//		case 4:
-//			return (List<T>) studentJPAImpl.getAll();
-//		default:
-//			return null;
-//		}
 	}
 
 	@Override
@@ -150,166 +138,43 @@ public class Controller implements ControllerAPI {
 		}
 
 	}
-//
-//	@Override
-//	public <T> boolean addWithCourses(T object, List<Courses> courses) {
-//		
-//		return false;
-//	}
 
 	public void associate(EntityType type, int id, List<Integer> listItemIds, EntityType typeOfAssociation) {
 		switch (type) {
-		
+
 		case TEACHER:
-			
-			Teacher teacher = teacherJPAImpl.getById(id);
-			List<Course> coursesToBeMerged = teacher.clearBindingsFromTeacher();
-
-			coursesToBeMerged.forEach(c -> {
-				courseJPAImpl.update(c);
-			});
-			coursesToBeMerged.clear();
-			for (Integer itemId : listItemIds) {
-				Course c = courseJPAImpl.getById(itemId);
-				teacher.addCourse(c);
-				courseJPAImpl.update(c);
-			}
-
-			teacherJPAImpl.update(teacher);
-
-//			Teacher teacher = teacherJPAImpl.getById(id);
-//			List<Course> coursesToBeMerged = teacher.clearBindingsFromTeacher();
-//			
-//			coursesToBeMerged.forEach(c->{
-//				courseJPAImpl.update(c);
-//			});
-//			coursesToBeMerged.clear();
-//			for (Integer itemId : listItemIds) {
-//				Course c = courseJPAImpl.getById(itemId);
-//				teacher.addCourse(c);
-//				courseJPAImpl.update(c);
-//			}
-//			
-//			teacherJPAImpl.update(teacher);
-//			refreshLocalData(type);
-//			refreshLocalData(typeOfAssociation);
+			teacherJPAImpl.changeCoursesForTeacher(id, listItemIds);
 			break;
 		case COURSE:
-			Course course = courseJPAImpl.getById(id);
 
 			switch (typeOfAssociation) {
 			case TEACHER:
-				List<Teacher> teachersToBeMerged = course.clearTeacherBindingsFromCourse();
-
-				teachersToBeMerged.forEach(t -> {
-					teacherJPAImpl.update(t);
-				});
-				teachersToBeMerged.clear();
-				for (Integer itemId : listItemIds) {
-					Teacher t = teacherJPAImpl.getById(itemId);
-					course.addTeacher(t);
-					teacherJPAImpl.update(t);
-				}
-
+				courseJPAImpl.changeTeachersForCourse(id, listItemIds);
 				break;
-
 			case EDUCATION:
-				List<Education> educationsToBeMerged = course.clearEducationBindingsFromCourse();
-
-				educationsToBeMerged.forEach(e -> {
-					educationJPAImpl.update(e);
-				});
-				educationsToBeMerged.clear();
-				for (Integer itemId : listItemIds) {
-					Education e = educationJPAImpl.getById(itemId);
-					course.addEducation(e);
-					educationJPAImpl.update(e);
-				}
-
+				courseJPAImpl.changeEducationsForCourse(id, listItemIds);
 				break;
 			}
-			courseJPAImpl.update(course);
 
-			break;
 		case EDUCATION:
-			Education education = educationJPAImpl.getById(id);
-
 			switch (typeOfAssociation) {
 			case COURSE:
-				coursesToBeMerged = education.clearCourseBindingsFromEducation();
-
-				coursesToBeMerged.forEach(t -> {
-					courseJPAImpl.update(t);
-				});
-				coursesToBeMerged.clear();
-				for (Integer itemId : listItemIds) {
-					Course c = courseJPAImpl.getById(itemId);
-					education.addCourse(c);
-					courseJPAImpl.update(c);
-				}
-
+				educationJPAImpl.changeCoursesForEducation(id, listItemIds);
 				break;
-
 			case STUDENT:
-				List<Student> studentsToBeMerged = education.clearStudentBindingsFromEducation();
-
-				studentsToBeMerged.forEach(s -> {
-					studentJPAImpl.update(s);
-				});
-				studentsToBeMerged.clear();
-				for (Integer itemId : listItemIds) {
-					Student s = studentJPAImpl.getById(itemId);
-					education.addStudent(s);
-					studentJPAImpl.update(s);
-				}
-
+				educationJPAImpl.changeStudentsForEducation(id, listItemIds);
 				break;
 			}
-			educationJPAImpl.update(education);
 			break;
 		case STUDENT:
-			Student s = studentJPAImpl.getById(id);
-			Education oldEducation = s.clearBindingsFromStudent();
-			if(oldEducation!=null)
-			educationJPAImpl.update(oldEducation);
-			System.out.println(oldEducation);
-
-			if(listItemIds.size()>0) {
-				Education e = educationJPAImpl.getById(listItemIds.get(0));
-				e.addStudent(s);
-				s.setEducation(e);
-				educationJPAImpl.update(e);
-			}
-			else {
-				s.setEducation(null);
-			}
-			studentJPAImpl.update(s);
+			studentJPAImpl.changeEducationForStudent(id, listItemIds);
 			break;
-
 		default:
 			break;
 		}
 
 		refreshLocalData(type);
 		refreshLocalData(typeOfAssociation);
-	}
-
-	public void disAssociate(EntityType type, int i, List<Integer> indicies, EntityType course) {
-		switch (type) {
-		case TEACHER:
-
-			break;
-		case COURSE:
-
-			break;
-		case EDUCATION:
-
-			break;
-		case STUDENT:
-
-			break;
-		}
-
 	}
 
 }

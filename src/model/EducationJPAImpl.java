@@ -8,8 +8,11 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
+import domain.Course;
 import domain.Education;
 import domain.Student;
+import domain.Teacher;
+
 import java.util.HashSet;
 
 public class EducationJPAImpl implements SchoolManagementDAO<Education> {
@@ -119,5 +122,40 @@ public class EducationJPAImpl implements SchoolManagementDAO<Education> {
 			if (em != null)
 				em.close();
 		}
+	}
+
+	public void changeCoursesForEducation(int id, List<Integer> listItemIds) {
+		em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Education education = em.find(Education.class, id);
+            education.clearCourseBindingsFromEducation();
+            listItemIds.forEach(i->education.addCourse(em.find(Course.class, i)));
+            tx.commit();
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+			if (em != null)
+				em.close();
+		}
+		
+	}
+
+	public void changeStudentsForEducation(int id, List<Integer> listItemIds) {
+		em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Education education = em.find(Education.class, id);
+            education.clearStudentBindingsFromEducation();
+            listItemIds.forEach(i->education.addStudent(em.find(Student.class, i)));
+            tx.commit();
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+			if (em != null)
+				em.close();
+		}	
 	}
 }
