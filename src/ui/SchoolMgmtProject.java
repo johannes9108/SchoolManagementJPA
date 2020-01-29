@@ -30,10 +30,100 @@ public class SchoolMgmtProject {
     public static void main(String[] args) {
 
         setUpData();
+        EntityManager em = emf.createEntityManager();
+        Teacher t3 = new Teacher("Lärare 3", "Larsson", LocalDate.of(1945, 07, 13), "larsson@hotmail.com");
+        em.getTransaction().begin();
+        em.persist(t3);
+        em.getTransaction().commit();
+
         
         menu();
-        
+
+/////Change by course, START
 //        Controller controller = new Controller();
+//
+//        System.out.println("/////// LÄRARE FÖRE OPERATION /////////");
+//        Teacher t1_before = controller.getById(1, EntityType.TEACHER);
+//        System.out.println(t1_before);
+//        Teacher t3_before = controller.getById(3, EntityType.TEACHER);
+//        System.out.println(t3_before);
+//        System.out.println("//////////KURS FÖRE OPERATION////");
+////        Course c2_before = controller.getById(2, EntityType.COURSE);
+//        Course c3_before = controller.getById(3, EntityType.COURSE);
+////        System.out.println(c2_before);
+//        System.out.println(c3_before);
+//
+//        System.out.println("\n ------------GENOMFÖR OPERATIN------------");
+//        em.getTransaction().begin();
+/////
+//        Course courseToUpdate = em.find(Course.class, 3);
+//        Teacher teacherToRemove = em.find(Teacher.class, 1);
+//        Teacher teacherToAdd = em.find(Teacher.class, 3);
+//
+//        courseToUpdate.removeTeacher(teacherToRemove);
+//        courseToUpdate.addTeacher(teacherToAdd);
+//      
+//        em.merge(courseToUpdate);
+//        
+//        em.getTransaction().commit();
+//        System.out.println("\n ------------OPERATIN KLAR------------");
+//        
+//        System.out.println("/////// LÄRARE EFTER OPERATION /////////");
+//        Teacher t1_after = controller.getById(1, EntityType.TEACHER);
+//        System.out.println(t1_after);
+//        Teacher t3_after = controller.getById(3, EntityType.TEACHER);
+//        System.out.println(t3_after);
+//        System.out.println("//////////KURSER EFTER OPERATION////");
+////        Course c2_after = controller.getById(2, EntityType.COURSE);
+//        Course c3_after = controller.getById(3, EntityType.COURSE);
+////        System.out.println(c2_after);
+//        System.out.println(c3_after);
+/////Change by course, FINNISH
+     
+/////Change by teacher, START
+//        Controller controller = new Controller();
+//
+//        EntityManager em = emf.createEntityManager();
+//
+//        System.out.println("/////// LÄRARE FÖRE OPERATION /////////");
+//        Teacher t1_before = controller.getById(1, EntityType.TEACHER);
+//        System.out.println(t1_before);
+//        Teacher t2_before = controller.getById(2, EntityType.TEACHER);
+//        System.out.println(t2_before);
+//        System.out.println("//////////KURSER FÖRE OPERATION////");
+//        Course c2_before = controller.getById(2, EntityType.COURSE);
+//        Course c3_before = controller.getById(3, EntityType.COURSE);
+//        System.out.println(c2_before);
+//        System.out.println(c3_before);
+//
+//        System.out.println("\n ------------GENOMFÖR OPERATIN------------");
+//        em.getTransaction().begin();
+//        Teacher teacherToUpdate = em.find(Teacher.class, 1);
+//
+//        Course courseToRemove = em.find(Course.class, 3);
+//        teacherToUpdate.removeCourse(courseToRemove);
+//        
+//        Course courseToAdd = em.find(Course.class, 2);
+//        teacherToUpdate.addCourse(courseToAdd);
+//        
+//        em.merge(teacherToUpdate);
+//        
+//        em.getTransaction().commit();
+//        System.out.println("\n ------------OPERATIN KLAR------------");
+//        
+//        System.out.println("/////// LÄRARE EFTER OPERATION /////////");
+//        Teacher t1_after = controller.getById(1, EntityType.TEACHER);
+//        System.out.println(t1_after);
+////        Teacher t2_after = controller.getById(2, EntityType.TEACHER);
+////        System.out.println(t2_after);
+//        System.out.println("//////////KURSER EFTER OPERATION////");
+//        Course c2_after = controller.getById(2, EntityType.COURSE);
+//        Course c3_after = controller.getById(3, EntityType.COURSE);
+//        System.out.println(c2_after);
+//        System.out.println(c3_after);
+/////Change by teacher, FINNISH
+        
+        
 ////        
 //////        Education ed1 = controller.getById(1, EntityType.EDUCATION);
 ////        Education ed2 = controller.getById(2, EntityType.EDUCATION);
@@ -45,12 +135,9 @@ public class SchoolMgmtProject {
 ////        ed2.removeCourse(course1before);
 //////        
 ////////        Teacher t1 = controller.getById(1, EntityType.TEACHER);
-//        Teacher t2 = controller.getById(2, EntityType.TEACHER);
 ////////        Course course2 = controller.getById(2, EntityType.COURSE);
 ////////        System.out.println("\n"+t1);
 ////////        System.out.println(course2);
-//        System.out.println(t2);
-////////        System.out.println("////////////////");
 //////        
 ////////        course2.addTeacher(t1);
 ////////        course1before.removeTeacher(t1);
@@ -71,10 +158,10 @@ public class SchoolMgmtProject {
 ////System.out.println(course1before);
 //////        
 //////        
-////////        Teacher t1_newFetch = controller.getById(1, EntityType.TEACHER);
+//////////        Teacher t1_newFetch = controller.getById(1, EntityType.TEACHER);
 //        Course course1_newFetch = controller.getById(1, EntityType.COURSE);
-////        System.out.println("//////////kalle////");
-//////        System.out.println(t1_newFetch);
+//        System.out.println("//////////kalle////");
+////////        System.out.println(t1_newFetch);
 //        System.out.println(course1_newFetch);
 //////
 ////        Education ed2_newFetch = controller.getById(2, EntityType.EDUCATION);
@@ -254,9 +341,11 @@ public class SchoolMgmtProject {
 
         Course c1 = new Course("Spanska A", "Språk", "junior", 5);
         Course c2 = new Course("Spanska B", "Språk", "senior", 10);
+        Course c3 = new Course("Kurs 3", "Språk", "mid-range",7);
 
         em.persist(c1);
         em.persist(c2);
+        em.persist(c3);
 
         Education e1 = new Education("Språkexpert", "Språkvetenskap", LocalDate.of(1999, 01, 31), LocalDate.of(1999, 02, 28));
         Education e2 = new Education("Javaexpert", "Coding", LocalDate.of(1999, 01, 31), LocalDate.of(1999, 02, 28));

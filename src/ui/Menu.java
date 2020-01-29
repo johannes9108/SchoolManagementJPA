@@ -634,11 +634,11 @@ public class Menu {
                         case 99:
                             loop = false;
                             if (controller.updateCoursesForTeacher(teacherID, null) != -1) {
-                                System.out.println(teacherToUpdate.getFirstName() + " " + teacherToUpdate.getLastName() + " borttagen!");
+                                System.out.println("Alla kurser borttagna för " + teacherToUpdate.getFirstName() + " " + teacherToUpdate.getLastName());
                             } else {
                                 System.out.println("Fel: Kunde inte radera " + teacherToUpdate.getFirstName() + " " + teacherToUpdate.getLastName());
                             }
-                            showStudents();
+                            showCoursesOrUpdateTeacherById(teacherID);
                             break;
                         case 0:
                             loop = false;

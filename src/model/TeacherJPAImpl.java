@@ -138,78 +138,73 @@ public class TeacherJPAImpl implements SchoolManagementDAO<Teacher>, TeacherDAO 
             Teacher teacherToUpdate = em.find(Teacher.class, teacherId);
 
             List<Integer> oldCoursesIds = new ArrayList<>();
-            
+
             if (teacherToUpdate.getCourses() != null) {
-                em.find(Teacher.class, teacherId).getCourses().forEach((course) -> { //kolla om det spelar roll om listan är tom
+                em.find(Teacher.class, teacherId).getCourses().forEach((course) -> {
                     oldCoursesIds.add(course.getId());
                 });
             }
 
             if ((updatedListofCourseIds == null || updatedListofCourseIds.isEmpty()) && oldCoursesIds.isEmpty()) {
                 //INGET GÖRS: updatedListofCourseIds var null/empty OCH gamla listan var null/tom.
-            } else {
+            } else if (updatedListofCourseIds != null && updatedListofCourseIds.isEmpty() == false) {
                 Collections.sort(oldCoursesIds);
                 Collections.sort(updatedListofCourseIds);
                 if (oldCoursesIds.equals(updatedListofCourseIds)) {
                     //INGET GÖRS: updatedListofCourseIds OCH gamla listan var LIKA.
                 } else {
-                    if (updatedListofCourseIds != null && updatedListofCourseIds.isEmpty() == false) {
-                        //Kopierar listan med id till lista med id att lägga till (kommer dock (längre ned) jämföra skillnader med tidigare kurslista innan åtgärd!)
-                        List<Integer> courseIdsToAddToTeacher = updatedListofCourseIds.stream()
+                    //Skapar en bruttolista med kurser att lägga till baserat på listan med kurs-id (kommer dock (längre ned) jämföra skillnader med tidigare kurslista innan åtgärd!)
+                    List<Integer> courseIdsToAddToTeacher = updatedListofCourseIds.stream()
+                            .collect(Collectors.toList());
+                    if (!oldCoursesIds.isEmpty()) {
+                        courseIdsToAddToTeacher.removeAll(oldCoursesIds); //eftersom tidigare kurslistan inte var tom ska vi ta bort de som redan finns från listan att lägag till
+                        //Kopierar listan med id från befintliga kurser till lista med id att ta bort (kommer dock (längre ned) jämföra skillnader med nya kurslista innan åtgärd!)
+                        List<Integer> courseIdsToRemoveFromTeacher = oldCoursesIds.stream()
                                 .collect(Collectors.toList());
-                        if (!oldCoursesIds.isEmpty()) {
-                            courseIdsToAddToTeacher.removeAll(oldCoursesIds); //eftersom tidigare kurslistan inte var tom ska vi ta bort de som redan finns från listan att lägag till
-                            //Kopierar listan med id från befintliga kurser till lista med id att ta bort (kommer dock (längre ned) jämföra skillnader med nya kurslista innan åtgärd!)
-                            List<Integer> courseIdsToRemoveFromTeacher = oldCoursesIds.stream()
-                                    .collect(Collectors.toList());
-                            courseIdsToRemoveFromTeacher.removeAll(updatedListofCourseIds);//eftersom tidigare kurslistan inte var tom ska vi ta bort de nya från listan att ta bort
+                        courseIdsToRemoveFromTeacher.removeAll(updatedListofCourseIds);//eftersom tidigare kurslistan inte var tom ska vi ta bort de nya från listan att ta bort
 
-                            if (courseIdsToRemoveFromTeacher.isEmpty()) {
-                                //LÄGGER BARA TILL:
-                                List<Course> coursesToUpdateAndMerge = new ArrayList<>();
-                                courseIdsToAddToTeacher.forEach(courseId -> coursesToUpdateAndMerge.add(em.find(Course.class, courseId)));
+                        if (courseIdsToRemoveFromTeacher.isEmpty()) {
+                            //LÄGGER BARA TILL:
+                            List<Course> coursesToUpdateAndMerge = new ArrayList<>();
+                            courseIdsToAddToTeacher.forEach(courseId -> coursesToUpdateAndMerge.add(em.find(Course.class, courseId)));
 
-                                for (Course course : coursesToUpdateAndMerge) {
-                                    course.addTeacher(teacherToUpdate);
-                                    em.merge(course);
-                                }
-                            } else {
-                                //LÄGG BÅDE TILL OCH TA BORT eftersom vi vet att båda inte är empty:
-                                List<Course> coursesToAddToTeacherAndMerge = new ArrayList<>();
-                                courseIdsToAddToTeacher.forEach(courseId -> coursesToAddToTeacherAndMerge.add(em.find(Course.class, courseId)));
-                                for (Course course : coursesToAddToTeacherAndMerge) {
-                                    course.addTeacher(teacherToUpdate);
-                                    em.merge(course); // Kanske ska ta bort? Blir dublett?
-                                }
-
-                                List<Course> coursestoRemoveAndClearAssociationFromTeacher = new ArrayList<>();
-                                courseIdsToRemoveFromTeacher.forEach(courseId -> coursestoRemoveAndClearAssociationFromTeacher.add(em.find(Course.class, courseId)));
-                                for (Course course : coursestoRemoveAndClearAssociationFromTeacher) {
-                                    course.removeTeacher(teacherToUpdate);
-                                    em.merge(course);
-                                }
-                                em.merge(teacherToUpdate);
-
-                            };
-                        } else { //LÄGGER BARA TILL KURESER eftersom inga tdigare fanns och nya listan inte vara tom
+                            for (Course course : coursesToUpdateAndMerge) {
+                                teacherToUpdate.addCourse(course);
+                            }
+                            em.merge(teacherToUpdate);
+                        } else {
+                            //LÄGG BÅDE TILL OCH TA BORT eftersom vi vet att båda inte är empty:
                             List<Course> coursesToAddToTeacherAndMerge = new ArrayList<>();
                             courseIdsToAddToTeacher.forEach(courseId -> coursesToAddToTeacherAndMerge.add(em.find(Course.class, courseId)));
                             for (Course course : coursesToAddToTeacherAndMerge) {
-                                course.addTeacher(teacherToUpdate);
-                                em.merge(course);
+                                //course.addTeacher(teacherToUpdate);
+                                teacherToUpdate.addCourse(course);
                             }
-                        } // else = uppdaterade listan innehåller värden OCH gamla listan var inte tom eller null
-
-                    } else if (!oldCoursesIds.isEmpty()) { //Här ska bara kurser tas bort eftersom uppdaterade listan var null eller tom
-                        List<Course> coursestoRemoveAndClearAssociationFromTeacher = new ArrayList<>();
-                        oldCoursesIds.forEach(courseId -> coursestoRemoveAndClearAssociationFromTeacher.add(em.find(Course.class, courseId)));
-                        for (Course course : coursestoRemoveAndClearAssociationFromTeacher) {
-                            course.removeTeacher(teacherToUpdate);
-                            em.merge(course);
+                            List<Course> coursestoRemoveAndClearAssociationFromTeacher = new ArrayList<>();
+                            courseIdsToRemoveFromTeacher.forEach(courseId -> coursestoRemoveAndClearAssociationFromTeacher.add(em.find(Course.class, courseId)));
+                            for (Course course : coursestoRemoveAndClearAssociationFromTeacher) {
+                                //course.removeTeacher(teacherToUpdate);
+                                teacherToUpdate.removeCourse(course);
+                            }
+                            em.merge(teacherToUpdate);
+                        };
+                    } else { //LÄGGER BARA TILL KURESER eftersom inga tdigare fanns och nya listan inte vara tom
+                        List<Course> coursesToAddToTeacherAndMerge = new ArrayList<>();
+                        courseIdsToAddToTeacher.forEach(courseId -> coursesToAddToTeacherAndMerge.add(em.find(Course.class, courseId)));
+                        for (Course course : coursesToAddToTeacherAndMerge) {
+                            teacherToUpdate.addCourse(course);
                         }
                         em.merge(teacherToUpdate);
                     }
                 }
+            } else if (!oldCoursesIds.isEmpty()) { //Här ska bara kurser tas bort eftersom uppdaterade listan var null eller tom
+                List<Course> coursestoRemoveAndClearAssociationFromTeacher = new ArrayList<>();
+                oldCoursesIds.forEach(courseId -> coursestoRemoveAndClearAssociationFromTeacher.add(em.find(Course.class, courseId)));
+                for (Course course : coursestoRemoveAndClearAssociationFromTeacher) {
+                    //course.removeTeacher(teacherToUpdate);
+                    teacherToUpdate.removeCourse(course);
+                }
+                em.merge(teacherToUpdate);
             }
             tx.commit();
             return teacherToUpdate.getId();
