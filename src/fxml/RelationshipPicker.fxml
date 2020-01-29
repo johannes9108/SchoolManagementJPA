@@ -15,7 +15,7 @@
       </Label>
    </top>
    <center>
-      <ListView fx:id="relationshipListView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <ListView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets top="6.0" />
          </BorderPane.margin></ListView>

@@ -6,11 +6,15 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
 
 /**
  * @author rober
@@ -34,10 +38,10 @@ public class Course {
     @Basic
     private int points;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH},fetch = FetchType.EAGER)
     private List<Teacher> teachers;
 
-    @ManyToMany(mappedBy = "courses")
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH})
     private List<Education> educations;
 
     public Course(String name, String subject, String difficulty, int points) {
@@ -104,12 +108,12 @@ public class Course {
     }
 
     public void addTeacher(Teacher teacher) {
-        getTeachers().add(teacher);
+        teachers.add(teacher);
         teacher.getCourses().add(this);
     }
 
     public void removeTeacher(Teacher teacher) {
-        getTeachers().remove(teacher);
+        teachers.remove(teacher);
         teacher.getCourses().remove(this);
     }
 
@@ -126,16 +130,54 @@ public class Course {
 
     public void addEducation(Education education) {
         getEducations().add(education);
+        education.getCourses().add(this);
     }
 
     public void removeEducation(Education education) {
         getEducations().remove(education);
+        education.getCourses().remove(this);
     }
 
+    @PreUpdate
+    public void test() {
+    	
+    	System.out.println("Uppdatering i " + name);
+    	for (Teacher teacher : teachers) {
+			System.out.println(teacher);
+		}
+    	System.out.println("Klar med Uppdatering!");
+    }
+    @PreRemove
+    public void clearBindingsFromCourse() {
+    	System.out.println("T size: " + teachers.size());
+    	System.out.println("E size: " + educations.size());
+    	clearTeacherBindingsFromCourse();
+    	clearEducationBindingsFromCourse();
+    	System.out.println();
+    }
+
+	public void clearEducationBindingsFromCourse() {
+		System.out.println("clearEducationBindingsFromCourse()");
+		for (Education education : educations) {
+			education.getCourses().remove(this);
+		}
+		educations.clear();
+	}
+
+	public void clearTeacherBindingsFromCourse() {
+		System.out.println("clearTeacherBindingsFromCourse()");
+		for (Teacher teacher: teachers) {
+    		teacher.getCourses().remove(this);
+    	}
+		teachers.clear();
+	}
+    
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Course{" + "id=" + id + ", name=" + name + ", subject=" + subject + ", difficulty=" + difficulty + ", points=" + points + ", teachers=");
+        StringBuilder sb = new StringBuilder("Course{" + "id=" + id + ", name=" + name + ", subject=" + subject + ", difficulty=" + difficulty + ", points=" + points + ", Teachers=");
         teachers.forEach(t->sb.append(t.getFirstName()+" " + t.getLastName() + ", "));
+        sb.append("\nEducations=");
+        educations.forEach(t->sb.append(t.getName()+ ", "));
         sb.delete(sb.length()-2, sb.length());
         sb.append('}');
         return sb.toString();

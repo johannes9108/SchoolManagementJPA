@@ -8,8 +8,11 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
+import domain.Course;
 import domain.Education;
 import domain.Student;
+import domain.Teacher;
+
 import java.util.HashSet;
 
 public class EducationJPAImpl implements SchoolManagementDAO<Education> {
@@ -49,17 +52,11 @@ public class EducationJPAImpl implements SchoolManagementDAO<Education> {
 
 		try {
 			tx.begin();
-			Education educationUpdate = em.find(Education.class, education.getId());
-			educationUpdate.setName(education.getName());
-			educationUpdate.setFaculty(education.getFaculty());
-			educationUpdate.setFinalDate(education.getFinalDate());
-			educationUpdate.setStartDate(education.getStartDate());
-			educationUpdate.setCourses(education.getCourses());
-			educationUpdate.setStudents(education.getStudents());
+			education = em.merge(education);
 			tx.commit();
-			return educationUpdate.getId();
+			return education.getId();
 		} catch (Exception e) {
-			System.out.println("Couldn't Persist the object" + education);
+			System.out.println("Couldn't Persist the object: " + education);
 			return -1;
 		} finally {
 			if (em != null)
@@ -114,19 +111,51 @@ public class EducationJPAImpl implements SchoolManagementDAO<Education> {
 		try {
 			tx.begin();
 			Education education = em.find(Education.class, id);
-                        List <Student> students = education.getStudents();
-                        for (Student student : students) {
-                        student.setEducation(null);
-                    }
 			em.remove(education);
 			tx.commit();
 			return id;
 		} catch (Exception exception) {
 			System.out.println("Couldn't remove the object with ID: " + id);
+			System.out.println(exception.getMessage());
 			return -1;
 		} finally {
 			if (em != null)
 				em.close();
 		}
+	}
+
+	public void changeCoursesForEducation(int id, List<Integer> listItemIds) {
+		em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Education education = em.find(Education.class, id);
+            education.clearCourseBindingsFromEducation();
+            listItemIds.forEach(i->education.addCourse(em.find(Course.class, i)));
+            tx.commit();
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+			if (em != null)
+				em.close();
+		}
+		
+	}
+
+	public void changeStudentsForEducation(int id, List<Integer> listItemIds) {
+		em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Education education = em.find(Education.class, id);
+            education.clearStudentBindingsFromEducation();
+            listItemIds.forEach(i->education.addStudent(em.find(Student.class, i)));
+            tx.commit();
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+			if (em != null)
+				em.close();
+		}	
 	}
 }

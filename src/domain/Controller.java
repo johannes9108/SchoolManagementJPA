@@ -100,34 +100,38 @@ public class Controller implements ControllerAPI {
 		default:
 			return null;
 		}
-//		switch (entityChoice) {
-//		case 1:
-//			return (List<T>) teacherJPAImpl.getAll();
-//		case 2:
-//			return (List<T>) courseJPAImpl.getAll();
-//		case 3:
-//			return (List<T>) educationJPAImpl.getAll();
-//		case 4:
-//			return (List<T>) studentJPAImpl.getAll();
-//		default:
-//			return null;
-//		}
 	}
 
 	@Override
 	public int removeById(int id, EntityType type) {
 		switch (type) {
 		case TEACHER:
-			return teacherJPAImpl.removeById(id);
+			int teacherToRemove = teacherJPAImpl.removeById(id);
+			refreshLocalData(type);
+			refreshLocalData(EntityType.COURSE);
+			return teacherToRemove;
+			
 		case COURSE:
-			return courseJPAImpl.removeById(id);
+			int courseToRemove = courseJPAImpl.removeById(id);
+			refreshLocalData(type);
+			refreshLocalData(EntityType.TEACHER);
+			refreshLocalData(EntityType.EDUCATION);
+			return courseToRemove;
 		case EDUCATION:
-			return educationJPAImpl.removeById(id);
+			int educationToRemove = educationJPAImpl.removeById(id);
+			refreshLocalData(type);
+			refreshLocalData(EntityType.COURSE);
+			refreshLocalData(EntityType.STUDENT);
+			return educationToRemove;
 		case STUDENT:
-			return studentJPAImpl.removeById(id);
+			int studentToRemove = studentJPAImpl.removeById(id);
+			refreshLocalData(type);
+			refreshLocalData(EntityType.EDUCATION);
+			return studentToRemove;
 		default:
 			return 0;
 		}
+		
 	}
 
 	@Override
@@ -150,42 +154,43 @@ public class Controller implements ControllerAPI {
 		}
 
 	}
-//
-//	@Override
-//	public <T> boolean addWithCourses(T object, List<Courses> courses) {
-//		
-//		return false;
-//	}
 
-	public void associate(EntityType type, int id, List<Integer> indicies) {
-		System.out.println(indicies);
-		System.out.println(courses);
+	public void associate(EntityType type, int id, List<Integer> listItemIds, EntityType typeOfAssociation) {
 		switch (type) {
+
 		case TEACHER:
-			Teacher teacher = teacherJPAImpl.getById(id);
-			for (Integer index : indicies) {
-				Course c = courseJPAImpl.getById(index);
-				System.out.println(c);
-				teacher.addCourse(c);
-			}
-			teacherJPAImpl.update(teacher);
-			refreshLocalData(type);
+			teacherJPAImpl.changeCoursesForTeacher(id, listItemIds);
 			break;
 		case COURSE:
-			
-			break;
-		case EDUCATION:
 
+			switch (typeOfAssociation) {
+			case TEACHER:
+				courseJPAImpl.changeTeachersForCourse(id, listItemIds);
+				break;
+			case EDUCATION:
+				courseJPAImpl.changeEducationsForCourse(id, listItemIds);
+				break;
+			}
+
+		case EDUCATION:
+			switch (typeOfAssociation) {
+			case COURSE:
+				educationJPAImpl.changeCoursesForEducation(id, listItemIds);
+				break;
+			case STUDENT:
+				educationJPAImpl.changeStudentsForEducation(id, listItemIds);
+				break;
+			}
 			break;
 		case STUDENT:
-
+			studentJPAImpl.changeEducationForStudent(id, listItemIds);
 			break;
-
 		default:
 			break;
 		}
-		
-		
+
+		refreshLocalData(type);
+		refreshLocalData(typeOfAssociation);
 	}
 
 }

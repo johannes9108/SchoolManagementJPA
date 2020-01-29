@@ -9,6 +9,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
+import domain.Course;
 import domain.Teacher;
  
 public class TeacherJPAImpl implements SchoolManagementDAO<Teacher> {
@@ -44,15 +45,18 @@ public class TeacherJPAImpl implements SchoolManagementDAO<Teacher> {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            Teacher teacherUpdate = em.find(Teacher.class, teacher.getId());
-            teacherUpdate.setFirstName(teacher.getFirstName());
-            teacherUpdate.setLastName(teacher.getLastName());
-            teacherUpdate.setEmail(teacher.getEmail());
-            teacherUpdate.setBirthDate(teacher.getBirthDate());
-            teacherUpdate.setCourses(teacher.getCourses());
-            System.out.println(teacherUpdate);
+            teacher = em.merge(teacher);
+            
+            
+//            Teacher teacherUpdate = em.find(Teacher.class, teacher.getId());
+//            teacherUpdate.setFirstName(teacher.getFirstName());
+//            teacherUpdate.setLastName(teacher.getLastName());
+//            teacherUpdate.setEmail(teacher.getEmail());
+//            teacherUpdate.setBirthDate(teacher.getBirthDate());
+//            teacherUpdate.setCourses(teacher.getCourses());
+//            System.out.println(teacherUpdate);
             tx.commit();
-            return teacherUpdate.getId();
+            return teacher.getId();
         } catch (PersistenceException exception) {
             System.out.println("Couldn't update the object" + teacher);
             return -1;
@@ -69,11 +73,11 @@ public class TeacherJPAImpl implements SchoolManagementDAO<Teacher> {
         try {
             em.getTransaction().begin();
             Teacher newTeacher = em.find(Teacher.class, id);
-            System.out.println(newTeacher);
+//            System.out.println(newTeacher);
             em.getTransaction().commit();
             return newTeacher;
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("getById(): " + e);
             return null;
         } finally {
 			if (em != null)
@@ -104,11 +108,12 @@ public class TeacherJPAImpl implements SchoolManagementDAO<Teacher> {
     public int removeById(int id
     ) {
         em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
         try {
-            em.getTransaction().begin();
-            Teacher teacherToRemove = em.find(Teacher.class, id);
-            em.remove(teacherToRemove);
-            em.getTransaction().commit();
+            tx.begin();
+            Teacher teacher = em.find(Teacher.class, id);
+            em.remove(teacher);
+            tx.commit();
             return id;
         } catch (Exception e) {
             System.out.println(e);
@@ -119,5 +124,22 @@ public class TeacherJPAImpl implements SchoolManagementDAO<Teacher> {
 		}
  
     }
+
+	public void changeCoursesForTeacher(int id, List<Integer> listItemIds) {
+		 	em = emf.createEntityManager();
+	        EntityTransaction tx = em.getTransaction();
+	        try {
+	            tx.begin();
+	            Teacher teacher = em.find(Teacher.class, id);
+	            teacher.clearBindingsFromTeacher();
+	            listItemIds.forEach(i->teacher.addCourse(em.find(Course.class, i)));
+	            tx.commit();
+	        } catch (Exception e) {
+	            System.out.println(e);
+	        } finally {
+				if (em != null)
+					em.close();
+			}
+	}
  
 }

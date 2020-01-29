@@ -7,12 +7,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 
 /**
  * @author rober
@@ -36,10 +38,10 @@ public class Education {
     @Basic
     private LocalDate finalDate;
 
-    @OneToMany(mappedBy = "education")
+    @OneToMany(mappedBy = "education",cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
     private List<Student> students;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "educations", cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
     private List<Course> courses;
 
     public Education(String name, String faculty, LocalDate startDate, LocalDate finalDate) {
@@ -53,14 +55,8 @@ public class Education {
     }
 
     public Education() {
-        students = new ArrayList<>();
-        courses = new ArrayList<>();
         
     }
-
-    
-    
-    
 
     public int getId() {
         return this.id;
@@ -114,12 +110,35 @@ public class Education {
     }
 
     public void addStudent(Student student) {
-        getStudents().add(student);
+        students.add(student);
         student.setEducation(this);
     }
 
+    @PreRemove
+    public void clearBindingsFromEducation() {
+    	System.out.println("S size: " + students.size());
+    	System.out.println("C size: " + courses.size());
+    	clearStudentBindingsFromEducation();
+    	clearCourseBindingsFromEducation();
+    }
+
+	public void clearCourseBindingsFromEducation() {
+		System.out.println("clearCourseBindingsFromEducation()");
+		for(Course course: courses) {
+    		course.getEducations().remove(this);
+    	}
+		courses.clear();
+	}
+
+	public void clearStudentBindingsFromEducation() {
+		System.out.println("clearStudentBindingsFromEducation()");
+		for (Student student : students) {
+			student.setEducation(null);
+		}
+		students.clear();
+	}
     public void removeStudent(Student student) {
-        getStudents().remove(student);
+        students.remove(student);
         student.setEducation(null);
     }
 
@@ -135,12 +154,12 @@ public class Education {
     }
 
     public void addCourse(Course course) {
-        getCourses().add(course);
+        courses.add(course);
         course.getEducations().add(this);
     }
 
     public void removeCourse(Course course) {
-        getCourses().remove(course);
+        courses.remove(course);
         course.getEducations().remove(this);
     }
 

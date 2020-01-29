@@ -10,6 +10,8 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import domain.Course;
+import domain.Education;
+import domain.Teacher;
 
 public class CourseJPAImpl implements SchoolManagementDAO<Course> {
 
@@ -45,15 +47,10 @@ public class CourseJPAImpl implements SchoolManagementDAO<Course> {
 		EntityTransaction tx = em.getTransaction();
 		try {
 			tx.begin();
-			Course courseUpdate = em.find(Course.class, course.getId());
-			courseUpdate.setName(course.getName());
-			courseUpdate.setDifficulty(course.getDifficulty());
-			courseUpdate.setSubject(course.getSubject());
-			courseUpdate.setEducations(course.getEducations());
-			courseUpdate.setPoints(course.getPoints());
-			courseUpdate.setTeachers(course.getTeachers());
+			course = em.merge(course);
+
 			tx.commit();
-			return courseUpdate.getId();
+			return course.getId();
 		} catch (PersistenceException exception) {
 			System.out.println("Couldn't update the object" + course);
 			return -1;
@@ -118,6 +115,41 @@ public class CourseJPAImpl implements SchoolManagementDAO<Course> {
 			if (em != null)
 				em.close();
 		}
+	}
+
+	public void changeTeachersForCourse(int id, List<Integer> listItemIds) {
+		em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Course course = em.find(Course.class, id);
+            course.clearTeacherBindingsFromCourse();
+            listItemIds.forEach(i->course.addTeacher(em.find(Teacher.class, i)));
+            tx.commit();
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+			if (em != null)
+				em.close();
+		}
+	}
+
+	public void changeEducationsForCourse(int id, List<Integer> listItemIds) {
+		em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Course course = em.find(Course.class, id);
+            course.clearEducationBindingsFromCourse();
+            listItemIds.forEach(i->course.addEducation(em.find(Education.class, i)));
+            tx.commit();
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+			if (em != null)
+				em.close();
+		}
+		
 	}
 
 }

@@ -7,11 +7,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
 
 /**
  * @author rober
@@ -35,12 +39,13 @@ public class Teacher {
     @Basic
     private String email;
 
-    @ManyToMany(mappedBy = "teachers")
+    @ManyToMany(mappedBy = "teachers",cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH},fetch = FetchType.EAGER)
     private List<Course> courses;
 
     public Teacher() {
         courses = new ArrayList<>();
     }
+    
 
     public Teacher(String firstName, String lastName, LocalDate birthDate, String email) {
         this.firstName = firstName;
@@ -104,7 +109,7 @@ public class Teacher {
     }
 
     public void addCourse(Course course) {
-        getCourses().add(course);
+        courses.add(course);
         course.getTeachers().add(this);
         
     }
@@ -114,6 +119,28 @@ public class Teacher {
         course.removeTeacher(this);
 
     }
+    @PreUpdate
+    public void test() {
+    	System.out.println("Uppdatering i " + firstName + ":" + lastName);
+    	for (Course course : courses) {
+			System.out.println(course);
+		}
+    	System.out.println("Klar med Uppdatering!");
+    }
+    
+    @PreRemove
+    public void clearBindingsFromTeacher() {
+    	System.out.println("C size: " + courses.size());
+    	
+    	for(Course course: courses) {
+    		System.out.println("Plockas bort: " + course.getName());
+    		System.out.println(course.getTeachers().remove(this));
+    	}
+    	
+    	courses.clear();
+
+    }
+    
 
     @Override
     public String toString() {

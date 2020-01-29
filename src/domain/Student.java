@@ -4,12 +4,19 @@
 package domain;
 
 import java.time.LocalDate;
+
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.PreRemove;
+import javax.persistence.Transient;
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  * @author rober
@@ -17,89 +24,119 @@ import javax.persistence.ManyToOne;
 @Entity
 public class Student {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 
-    @Basic
-    private String firstName;
+	@Basic
+	private String firstName;
 
-    @Basic
-    private String lastName;
+	@Basic
+	private String lastName;
 
-    @Basic
-    private LocalDate birthDate;
+	@Basic
+	private LocalDate birthDate;
 
-    @Basic
-    private String email;
+	@Basic
+	private String email;
 
-    @ManyToOne
-    private Education education;
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+	private Education education;
 
-    public Student() {
-    }
+	@Transient
+	private SimpleStringProperty educationProperty;
 
-    public Student(String firstName, String lastName, LocalDate birthDate, String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthDate = birthDate;
-        this.email = email;
-    }
-    
-    
+	public Student() {
+		educationProperty = new SimpleStringProperty();
+	}
 
-    public int getId() {
-        return this.id;
-    }
+	public Student(String firstName, String lastName, LocalDate birthDate, String email) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.birthDate = birthDate;
+		this.email = email;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+		educationProperty = new SimpleStringProperty();
+	}
 
-    public String getFirstName() {
-        return this.firstName;
-    }
+	public int getId() {
+		return this.id;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public String getLastName() {
-        return this.lastName;
-    }
+	public String getFirstName() {
+		return this.firstName;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public LocalDate getBirthDate() {
-        return this.birthDate;
-    }
+	public String getLastName() {
+		return this.lastName;
+	}
 
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    public String getEmail() {
-        return this.email;
-    }
+	public LocalDate getBirthDate() {
+		return this.birthDate;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public void setBirthDate(LocalDate birthDate) {
+		this.birthDate = birthDate;
+	}
 
-    public Education getEducation() {
-        return this.education;
-    }
+	public String getEmail() {
+		return this.email;
+	}
 
-    public void setEducation(Education education) {
-        this.education = education;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    @Override
-    public String toString() {
-        return "Student{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate + ", email=" + email + ", education=" + education.getName() + '}';
-    }
-    
+	public SimpleStringProperty educationProperty() {
+		if (education != null)
+			educationProperty.set(education.getName());
+		return educationProperty;
+	}
+
+	@PreRemove
+	public void clearBindingsFromStudent() {
+		if (education != null)
+			education.getStudents().remove(this);
+		setEducation(null);
+	}
+
+	public Education getEducation() {
+		return this.education;
+	}
+
+	public void setEducation(Education education) {
+		this.education = education;
+		if (education != null) {
+			educationProperty.setValue(education.getName());
+		}
+		else
+			educationProperty.setValue("");
+	}
+	
+	public void addEducation(Education education) {
+		if(education!=null) {
+			education.getStudents().add(this);
+			setEducation(education);
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "Student{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", birthDate="
+				+ birthDate + ", email=" + email + ", education=" + ((education != null) ? education.getName() : "")
+				+ '}';
+	}
 
 }
