@@ -1,6 +1,6 @@
 package javafxControllers;
 
-import model.EntityType;
+import integration.EntityType;
 
 public interface SubControllerAPI {
 

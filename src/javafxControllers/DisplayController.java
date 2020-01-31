@@ -12,6 +12,7 @@ import domain.Course;
 import domain.Education;
 import domain.Student;
 import domain.Teacher;
+import integration.EntityType;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -31,7 +32,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
-import model.EntityType;
 import ui.SchoolManagementSystemJavaFX;
 
 public class DisplayController implements SubControllerAPI {
@@ -96,7 +96,24 @@ public class DisplayController implements SubControllerAPI {
 
 	public void populate(EntityType type, HashMap<String, String> filterMap) {
 		tw.getItems().clear();
-		List<?> collection = (List<?>) controller.getAll(currentSelection);
+		List<?> collection = null;
+		switch (type) {
+		case TEACHER:
+			collection = controller.getAllTeachers();
+			break;
+		case COURSE:
+			collection = controller.getAllCourses();
+			break;
+		case EDUCATION:
+			collection = controller.getAllEducations();
+			break;
+		case STUDENT:
+			collection = controller.getAllStudents();
+			break;
+
+		default:
+			break;
+		}
 		ObservableList<?> displayList = tw.getItems();
 		ArrayList tmp = null;
 
@@ -478,22 +495,22 @@ public class DisplayController implements SubControllerAPI {
 
 				case TEACHER:
 					Teacher removeTeacher = (Teacher) item.getItem();
-					int result = controller.removeById(removeTeacher.getId(), currentSelection);
+					int result = controller.removeTeacherById(removeTeacher.getId());
 					System.out.println("Teacher with ID: " + result + " has been removed");
 					break;
 				case COURSE:
 					Course removeCourse = (Course) item.getItem();
-					result = controller.removeById(removeCourse.getId(), currentSelection);
+					result = controller.removeCourseById(removeCourse.getId());
 					System.out.println("Course with ID: " + result + " has been removed");
 					break;
 				case EDUCATION:
 					Education removeEducation = (Education) item.getItem();
-					result = controller.removeById(removeEducation.getId(), currentSelection);
+					result = controller.removeEducationById(removeEducation.getId());
 					System.out.println("Education with ID: " + result + " has been removed");
 					break;
 				case STUDENT:
 					Student removeStudent = (Student) item.getItem();
-					result = controller.removeById(removeStudent.getId(), currentSelection);
+					result = controller.removeStudentById(removeStudent.getId());
 					System.out.println("Student with ID: " + result + " has been removed");
 					break;
 

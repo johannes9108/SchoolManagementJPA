@@ -18,6 +18,12 @@ import domain.Course;
 import domain.Education;
 import domain.Student;
 import domain.Teacher;
+import integration.CourseJPAImpl;
+import integration.EducationJPAImpl;
+import integration.EntityType;
+import integration.ListItem;
+import integration.StudentJPAImpl;
+import integration.TeacherJPAImpl;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -52,8 +58,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafxControllers.CRUDController;
 import javafxControllers.DisplayController;
-import model.EntityType;
-import model.ListItem;
 
 public class SchoolManagementSystemJavaFX extends Application {
 
@@ -68,8 +72,10 @@ public class SchoolManagementSystemJavaFX extends Application {
 //	private static DeleteController deleteController;
 
 	public static void main(String[] args) {
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
 		setUpData();
-		controller = new Controller();
+		controller = new Controller(new TeacherJPAImpl(emf), new CourseJPAImpl(emf), new EducationJPAImpl(emf),
+				new StudentJPAImpl(emf));
 		crudController = new CRUDController();
 		displayController = new DisplayController();
 
@@ -117,7 +123,7 @@ public class SchoolManagementSystemJavaFX extends Application {
 		loadDisplayTab();
 
 		loadAddTab();
-		
+
 		loadStatisticTab();
 
 //		loader = new FXMLLoader(getClass().getResource("/fxml/Statistics.fxml"));
@@ -167,43 +173,43 @@ public class SchoolManagementSystemJavaFX extends Application {
 		displayController.setMainController(controller);
 	}
 
-	public void loadStatisticTab() throws IOException{
+	public void loadStatisticTab() throws IOException {
 		FXMLLoader loader;
 		VBox vbox;
 		loader = new FXMLLoader(getClass().getResource("/fxml/StatsTab.fxml"));
 //		loader.setController(displayController);
-		
+
 		vbox = loader.load();
 		System.out.println(vbox);
 		AnchorPane formAnchorPane;
 		TextField formTextField;
 		int size;
-		
+
 		formAnchorPane = (AnchorPane) vbox.getChildren().get(0);
 		formTextField = (TextField) formAnchorPane.getChildren().get(1);
-		size = controller.getAll(EntityType.TEACHER).size();
-		formTextField.setText(""+size);
-		
+		size = controller.getAllTeachers().size();
+		formTextField.setText("" + size);
+
 		formAnchorPane = (AnchorPane) vbox.getChildren().get(1);
 		formTextField = (TextField) formAnchorPane.getChildren().get(1);
-		size = controller.getAll(EntityType.COURSE).size();
-		formTextField.setText(""+size);
-		
+		size = controller.getAllCourses().size();
+		formTextField.setText("" + size);
+
 		formAnchorPane = (AnchorPane) vbox.getChildren().get(2);
 		formTextField = (TextField) formAnchorPane.getChildren().get(1);
-		size = controller.getAll(EntityType.EDUCATION).size();
-		formTextField.setText(""+size);
-		
+		size = controller.getAllEducations().size();
+		formTextField.setText("" + size);
+
 		formAnchorPane = (AnchorPane) vbox.getChildren().get(3);
 		formTextField = (TextField) formAnchorPane.getChildren().get(1);
-		size = controller.getAll(EntityType.STUDENT).size();
-		formTextField.setText(""+size);
-		
+		size = controller.getAllStudents().size();
+		formTextField.setText("" + size);
+
 		tabGroup.get(2).setContent(vbox);
-		
+
 //		displayController.setBiDirectional(this);
 //		displayController.setMainController(controller);
-		
+
 	}
 
 	public void insertCorrectAddView(EntityType type) {
@@ -385,30 +391,45 @@ public class SchoolManagementSystemJavaFX extends Application {
 
 	public List<ListItem> extractListItemsFromCollection(EntityType type) {
 		List<ListItem> convertedCollection = new ArrayList<ListItem>();
-		controller.getAll(type).forEach(item -> {
-			switch (type) {
+		switch (type) {
 
-			case TEACHER:
-				Teacher t = (Teacher) item;
+		case TEACHER:
+			List<Teacher> list1 = controller.getAllTeachers();
+			list1.forEach(t -> {
 				convertedCollection.add(new ListItem(t.getFirstName() + ":" + t.getLastName(), t.getId()));
-				break;
-			case COURSE:
-				Course c = (Course) item;
+			});
+			break;
+
+		case COURSE:
+			List<Course> list2 = controller.getAllCourses();
+			list2.forEach(c -> {
+
 				convertedCollection.add(new ListItem(c.getName(), c.getId()));
-				break;
+			});
 
-			case EDUCATION:
-				Education e = (Education) item;
+			break;
+
+		case EDUCATION:
+			List<Education> list3 = controller.getAllEducations();
+			list3.forEach(e -> {
+
 				convertedCollection.add(new ListItem(e.getName(), e.getId()));
-				break;
 
-			case STUDENT:
-				Student s = (Student) item;
+			});
+
+			break;
+
+		case STUDENT:
+			List<Student> list4 = controller.getAllStudents();
+			list4.forEach(s -> {
+
 				convertedCollection.add(new ListItem(s.getFirstName() + ":" + s.getLastName(), s.getId()));
-				break;
-			}
 
-		});
+			});
+
+			break;
+
+		}
 		return convertedCollection;
 	}
 
@@ -1094,7 +1115,6 @@ public class SchoolManagementSystemJavaFX extends Application {
 			ap = (AnchorPane) loader.getRoot();
 			vbox.getChildren().add(ap);
 
-			
 			Label educationLabel = new Label("Education");
 			ChoiceBox<ListItem> educationChoiceBox = new ChoiceBox<>();
 			educationChoiceBox.setPrefWidth(150);
@@ -1103,29 +1123,27 @@ public class SchoolManagementSystemJavaFX extends Application {
 			educations = extractListItemsFromCollection(EntityType.EDUCATION);
 			educationChoiceBox.getItems().add(new ListItem("", -1));
 			educationChoiceBox.getItems().addAll(educations);
-			
-			
+
 			vbox.getChildren().add(educationLabel);
 			vbox.getChildren().add(educationChoiceBox);
 
 			formItems = ap.getChildren();
-			
+
 			vboxContainer = ((VBox) formItems.get(0));
 			formLabel = (Label) vboxContainer.getChildren().get(0);
 
-			Student tmpStudent= (Student) item;
+			Student tmpStudent = (Student) item;
 			formLabel.setText("Student");
 			firstName = ((TextField) ((AnchorPane) vboxContainer.getChildren().get(1)).getChildren().get(1));
-				firstName.setText(tmpStudent.getFirstName());
+			firstName.setText(tmpStudent.getFirstName());
 			lastName = ((TextField) ((AnchorPane) vboxContainer.getChildren().get(2)).getChildren().get(1));
-				lastName.setText(tmpStudent.getLastName());
-			birthDate = ((DatePicker) ((AnchorPane) vboxContainer.getChildren().get(3)).getChildren()
-					.get(1));
+			lastName.setText(tmpStudent.getLastName());
+			birthDate = ((DatePicker) ((AnchorPane) vboxContainer.getChildren().get(3)).getChildren().get(1));
 			birthDate.setValue(tmpStudent.getBirthDate());
 			email = ((TextField) ((AnchorPane) vboxContainer.getChildren().get(4)).getChildren().get(1));
-				email.setText(tmpStudent.getEmail());
-			if(tmpStudent.getEducation()!=null) {
-			int index = extractIndexFromID(tmpStudent.getEducation().getId(),educationChoiceBox);
+			email.setText(tmpStudent.getEmail());
+			if (tmpStudent.getEducation() != null) {
+				int index = extractIndexFromID(tmpStudent.getEducation().getId(), educationChoiceBox);
 				educationChoiceBox.getSelectionModel().select(index);
 			}
 			crudController.setFirstNameField(firstName);
@@ -1162,7 +1180,7 @@ public class SchoolManagementSystemJavaFX extends Application {
 //			crudController.setEmailField(email);
 //			crudController.setCourseListView(lw);
 //			crudController.setCurrentItemId(tmpTeacher.getId());
-			
+
 			break;
 		}
 
@@ -1181,13 +1199,12 @@ public class SchoolManagementSystemJavaFX extends Application {
 	private int extractIndexFromID(int id, ChoiceBox<ListItem> educationChoiceBox) {
 		int n = 0;
 		for (ListItem item : educationChoiceBox.getItems()) {
-			if(item.getId() == id) {
+			if (item.getId() == id) {
 				return n;
 			}
 			n++;
 		}
-		
-		
+
 		return -1;
 	}
 

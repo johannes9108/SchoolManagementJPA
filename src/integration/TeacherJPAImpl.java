@@ -1,4 +1,4 @@
-package model;
+package integration;
  
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +48,8 @@ public class TeacherJPAImpl implements SchoolManagementDAO<Teacher> {
             teacher = em.merge(teacher);
             
             
+            
+            
 //            Teacher teacherUpdate = em.find(Teacher.class, teacher.getId());
 //            teacherUpdate.setFirstName(teacher.getFirstName());
 //            teacherUpdate.setLastName(teacher.getLastName());
@@ -73,6 +75,7 @@ public class TeacherJPAImpl implements SchoolManagementDAO<Teacher> {
         try {
             em.getTransaction().begin();
             Teacher newTeacher = em.find(Teacher.class, id);
+//            em.createQuery("select t from Teacher as t left join fetch t.courses where t.id  = :id").setParameter("id", id).getSingleResult();
 //            System.out.println(newTeacher);
             em.getTransaction().commit();
             return newTeacher;

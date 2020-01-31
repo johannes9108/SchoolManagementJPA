@@ -8,6 +8,8 @@ import domain.Course;
 import domain.Education;
 import domain.Student;
 import domain.Teacher;
+import integration.EntityType;
+import integration.ListItem;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,8 +21,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import model.EntityType;
-import model.ListItem;
 import ui.SchoolManagementSystemJavaFX;
 
 public class CRUDController implements SubControllerAPI {
@@ -221,7 +221,7 @@ public class CRUDController implements SubControllerAPI {
 
 		switch (currentSelection) {
 		case TEACHER:
-			id = controller.add(new Teacher(firstNameField.getText(), lastNameField.getText(),
+			id = controller.addTeacher(new Teacher(firstNameField.getText(), lastNameField.getText(),
 					birthDatePicker.getValue(), emailField.getText()));
 			if (id >= 0) {
 				List<Integer> ids = convertItemsToIDs(courseListView);
@@ -237,7 +237,7 @@ public class CRUDController implements SubControllerAPI {
 			if(pointsField.getText().isEmpty()) {
 				pointsField.setText(""+0);
 			}
-			id = controller.add(new Course(nameField.getText(), subjectField.getText(), difficultyField.getText(),
+			id = controller.addCourse(new Course(nameField.getText(), subjectField.getText(), difficultyField.getText(),
 					Integer.parseInt(pointsField.getText())));
 			if (id >= 0) {
 				List<Integer> associationIDs = convertItemsToIDs(teacherListView);
@@ -255,7 +255,7 @@ public class CRUDController implements SubControllerAPI {
 
 			break;
 		case EDUCATION:
-			id = controller.add(new Education(nameField.getText(), facultyField.getText(), startDate.getValue(),
+			id = controller.addEducation(new Education(nameField.getText(), facultyField.getText(), startDate.getValue(),
 					finalDate.getValue()));
 
 			if (id >= 0) {
@@ -274,7 +274,7 @@ public class CRUDController implements SubControllerAPI {
 
 			break;
 		case STUDENT:
-			id = controller.add(new Student(firstNameField.getText(), lastNameField.getText(),
+			id = controller.addStudent(new Student(firstNameField.getText(), lastNameField.getText(),
 					birthDatePicker.getValue(), emailField.getText()));
 			if (id >= 0) {
 				List<Integer> indicies = convertItemsToIDs(educationListView);
@@ -342,12 +342,12 @@ public class CRUDController implements SubControllerAPI {
 //					System.out.println(emailField.getText());
 //					System.out.println(courseListView.getSelectionModel().getSelectedIndices());
 					System.out.println("ID: " + currentItemId);
-					Teacher teacher = controller.getById(currentItemId, currentSelection);
+					Teacher teacher = controller.getTeacherById(currentItemId);
 					teacher.setFirstName(firstNameField.getText());
 					teacher.setLastName(lastNameField.getText());
 					teacher.setBirthDate(birthDatePicker.getValue());
 					teacher.setEmail(emailField.getText());
-					controller.update(teacher);
+					controller.updateTeacher(teacher);
 					System.out.println("Currentselection: " + currentSelection);
 					System.out.println("currentItemId: " + currentItemId);
 					System.out.println("Currentselection: " + courseListView.getSelectionModel().getSelectedItems());
@@ -360,7 +360,7 @@ public class CRUDController implements SubControllerAPI {
 
 				case COURSE:
 					System.out.println("ID: " + currentItemId);
-					Course course = controller.getById(currentItemId, currentSelection);
+					Course course = controller.getCourseById(currentItemId);
 
 					course.setName(nameField.getText());
 					course.setSubject(subjectField.getText());
@@ -369,7 +369,7 @@ public class CRUDController implements SubControllerAPI {
 						pointsField.setText(""+0);
 					}
 					course.setPoints(Integer.parseInt(pointsField.getText()));
-					controller.update(course);
+					controller.updateCourse(course);
 					System.out.println("Currentselection: " + currentSelection);
 					System.out.println("currentItemId: " + currentItemId);
 					System.out.println("Currentselection: " + teacherListView.getSelectionModel().getSelectedItems());
@@ -384,13 +384,13 @@ public class CRUDController implements SubControllerAPI {
 				case EDUCATION:
 
 					System.out.println("ID: " + currentItemId);
-					Education education = controller.getById(currentItemId, currentSelection);
+					Education education = controller.getEducationById(currentItemId);
 
 					education.setName(nameField.getText());
 					education.setFaculty(facultyField.getText());
 					education.setStartDate(startDate.getValue());
 					education.setFinalDate(finalDate.getValue());
-					controller.update(education);
+					controller.updateEducation(education);
 					System.out.println("Currentselection: " + currentSelection);
 					System.out.println("currentItemId: " + currentItemId);
 					System.out.println("Currentselection: " + courseListView.getSelectionModel().getSelectedItems());
@@ -405,12 +405,12 @@ public class CRUDController implements SubControllerAPI {
 
 				case STUDENT:
 					System.out.println("ID: " + currentItemId);
-					Student student = controller.getById(currentItemId, currentSelection);
+					Student student = controller.getStudentById(currentItemId);
 					student.setFirstName(firstNameField.getText());
 					student.setLastName(lastNameField.getText());
 					student.setBirthDate(birthDatePicker.getValue());
 					student.setEmail(emailField.getText());
-					controller.update(student);
+					controller.updateStudent(student);
 					System.out.println("Currentselection: " + currentSelection);
 					System.out.println("currentItemId: " + currentItemId);
 					System.out.println("Currentselection: " + courseListView.getSelectionModel().getSelectedItems());

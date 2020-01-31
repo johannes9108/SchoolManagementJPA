@@ -14,8 +14,9 @@ import domain.Course;
 import domain.Education;
 import domain.Student;
 import domain.Teacher;
+import integration.EntityType;
+
 import java.util.Set;
-import model.EntityType;
 
 public class SchoolMgmtProject {
 	private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("PU");
@@ -23,7 +24,7 @@ public class SchoolMgmtProject {
     public static void main(String[] args) {
 
         setUpData();
-        Controller controller = new Controller();
+        Controller controller = null;
                                 
         
         
@@ -130,12 +131,12 @@ public class SchoolMgmtProject {
 //        controller.associate(EntityType.TEACHER, 1, courses);
 //        set.forEach(System.out::println);
         
-        
-        Course c = controller.getById(1, EntityType.COURSE);
-      System.out.println("INNAN:\n" + c);
-        c.setName("TEST");
-        controller.update(c);
-      System.out.println("EFTER ASSOCIATION:\n" + c);
+//        
+//        Course c = controller.getById(1, EntityType.COURSE);
+//      System.out.println("INNAN:\n" + c);
+//        c.setName("TEST");
+//        controller.update(c);
+//      System.out.println("EFTER ASSOCIATION:\n" + c);
     }
 
     public static void setUpData() {

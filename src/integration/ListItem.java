@@ -1,4 +1,4 @@
-package model;
+package integration;
 
 public class ListItem {
 
